@@ -9,7 +9,6 @@ interface IAccessControl is IAccessControlInternal {
     /*
      * @notice query whether role is assigned to account
      * @param role role to query
-     * @param account account to query
      * @return whether role is assigned to account
      */
     function hasRole(

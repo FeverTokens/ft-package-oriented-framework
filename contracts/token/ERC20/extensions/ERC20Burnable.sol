@@ -12,7 +12,7 @@ import { ERC20BurnableInternal } from "./ERC20BurnableInternal.sol";
 abstract contract ERC20Burnable is IERC20Burnable, ERC20BurnableInternal {
     /// @inheritdoc IERC20Burnable
     function burn(uint256 amount) public virtual {
-        _burn(msg.sender, amount);
+        _burn(_msgSender(), amount);
     }
 
     /// @inheritdoc IERC20Burnable

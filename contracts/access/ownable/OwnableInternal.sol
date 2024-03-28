@@ -5,10 +5,11 @@ pragma solidity ^0.8.20;
 
 import { IOwnableInternal } from "./IOwnableInternal.sol";
 import { OwnableStorage } from "./OwnableStorage.sol";
+import { ContextInternal } from "../../metatx/ContextInternal.sol";
 
-abstract contract OwnableInternal is IOwnableInternal {
+abstract contract OwnableInternal is IOwnableInternal, ContextInternal {
     modifier onlyOwner() {
-        require(msg.sender == _owner(), "ERC173: sender must be owner");
+        require(_msgSender() == _owner(), "ERC173: sender must be owner");
         _;
     }
 

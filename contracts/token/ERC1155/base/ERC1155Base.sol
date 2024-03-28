@@ -7,13 +7,18 @@ import { IERC1155 } from "../IERC1155.sol";
 import { IERC1155Base } from "./IERC1155Base.sol";
 import { IERC1155Receiver } from "../IERC1155Receiver.sol";
 import { ERC1155BaseInternal } from "./ERC1155BaseInternal.sol";
+import { ERC2771ContextInternal } from "../../../metatx/ERC2771ContextInternal.sol";
 
 /**
  * @title Base ERC1155 contract
  * @dev derived from https://github.com/OpenZeppelin/openzeppelin-contracts/ (MIT license)
  * @dev inheritor must either implement ERC165 supportsInterface or inherit ERC165Base
  */
-abstract contract ERC1155Base is IERC1155Base, ERC1155BaseInternal {
+abstract contract ERC1155Base is
+    IERC1155Base,
+    ERC2771ContextInternal,
+    ERC1155BaseInternal
+{
     /**
      * @inheritdoc IERC1155
      */
@@ -61,9 +66,9 @@ abstract contract ERC1155Base is IERC1155Base, ERC1155BaseInternal {
         uint256 amount,
         bytes memory data
     ) public virtual {
-        if (from != msg.sender && !isApprovedForAll(from, msg.sender))
+        if (from != _msgSender() && !isApprovedForAll(from, _msgSender()))
             revert ERC1155Base__NotOwnerOrApproved();
-        _safeTransfer(msg.sender, from, to, id, amount, data);
+        _safeTransfer(_msgSender(), from, to, id, amount, data);
     }
 
     /**
@@ -76,8 +81,8 @@ abstract contract ERC1155Base is IERC1155Base, ERC1155BaseInternal {
         uint256[] memory amounts,
         bytes memory data
     ) public virtual {
-        if (from != msg.sender && !isApprovedForAll(from, msg.sender))
+        if (from != _msgSender() && !isApprovedForAll(from, _msgSender()))
             revert ERC1155Base__NotOwnerOrApproved();
-        _safeTransferBatch(msg.sender, from, to, ids, amounts, data);
+        _safeTransferBatch(_msgSender(), from, to, ids, amounts, data);
     }
 }

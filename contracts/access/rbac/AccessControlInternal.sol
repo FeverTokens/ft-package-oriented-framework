@@ -8,15 +8,21 @@ import { AccessControlStorage } from "./AccessControlStorage.sol";
 import { EnumerableSet } from "../../data/EnumerableSet.sol";
 import { AddressUtils } from "../../utils/AddressUtils.sol";
 import { UintUtils } from "../../utils/UintUtils.sol";
+import { ContextInternal } from "../../metatx/ContextInternal.sol";
 
 /**
  * @title Role-based access control system
  * @dev derived from https://github.com/OpenZeppelin/openzeppelin-contracts (MIT license)
  */
-abstract contract AccessControlInternal is IAccessControlInternal {
+abstract contract AccessControlInternal is
+    IAccessControlInternal,
+    ContextInternal
+{
     using AddressUtils for address;
     using EnumerableSet for EnumerableSet.AddressSet;
     using UintUtils for uint256;
+
+    bytes32 internal constant DEFAULT_ADMIN_ROLE = 0x00;
 
     modifier onlyRole(bytes32 role) {
         _checkRole(role);
@@ -44,7 +50,7 @@ abstract contract AccessControlInternal is IAccessControlInternal {
      * @param role role to query
      */
     function _checkRole(bytes32 role) internal view virtual {
-        _checkRole(role, msg.sender);
+        _checkRole(role, _msgSender());
     }
 
     /**
@@ -96,7 +102,7 @@ abstract contract AccessControlInternal is IAccessControlInternal {
      */
     function _grantRole(bytes32 role, address account) internal virtual {
         AccessControlStorage.layout().roles[role].roleMembers.add(account);
-        emit RoleGranted(role, account, msg.sender);
+        emit RoleGranted(role, account, _msgSender());
     }
 
     /*
@@ -106,7 +112,7 @@ abstract contract AccessControlInternal is IAccessControlInternal {
      */
     function _revokeRole(bytes32 role, address account) internal virtual {
         AccessControlStorage.layout().roles[role].roleMembers.remove(account);
-        emit RoleRevoked(role, account, msg.sender);
+        emit RoleRevoked(role, account, _msgSender());
     }
 
     /**
@@ -114,7 +120,16 @@ abstract contract AccessControlInternal is IAccessControlInternal {
      * @param role role to renounce
      */
     function _renounceRole(bytes32 role) internal virtual {
-        _revokeRole(role, msg.sender);
+        _revokeRole(role, _msgSender());
+    }
+
+    /**
+     * @notice Setup role for given account
+     * @param role role to set
+     * @param account recipient of role assignment
+     */
+    function _setupRole(bytes32 role, address account) internal virtual {
+        _grantRole(role, account);
     }
 
     /**
