@@ -94,4 +94,5 @@ npm run compile
 ```
 
 ## License
-SPDX-License-Identifier: MIT
+
+This project is licensed under the [MIT License](./LICENSE). You are free to use, modify, and distribute it under the conditions specified in the license file.
