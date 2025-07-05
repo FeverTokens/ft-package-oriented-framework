@@ -1,98 +1,218 @@
-# FeverTokens Package-oriented Framework
+# **FeverTokens Package-Oriented Framework**
 
-## Introduction
-Functional scalability in Web3 addresses the limits of EVM byte-code size and the complexity of monolithic contracts. FeverTokens’ Package-oriented Framework extends EIP-2535 (Diamond Standard) to deliver modular, versioned, and individually upgradeable smart contract packages.
+## **🔍 Overview**
 
-## Functional Scalability Challenge
-- **EVM byte-code size limits:** Monolithic contracts hit the 24 KB size cap, forcing workarounds or multiple proxies.  
-- **Maintenance pain points:** Large codebases become hard to audit, test, and upgrade.  
-- **Proxy design shortcomings:** Naïve proxies bundle unrelated logic, leading to tangled upgrades and higher risk.
+The **FeverTokens Package-Oriented Framework** is a composable smart contract architecture based on the [EIP-2535 Diamond Standard](https://eips.ethereum.org/EIPS/eip-2535). It provides a structured and modular approach for building scalable, upgradable, and reusable smart contract packages tailored to institutional and mission-critical systems.
 
-## Framework Overview
-The Package-oriented paradigm decomposes application logic into cohesive packages—each a collection of composable, reusable contracts. It builds on EIP-2535’s facet routing, adding standardized package metadata and tooling for on-chain, off-chain, and cross-chain components.
+By following a strict separation of concerns, this framework makes smart contracts:
 
-## Architecture
-Applications break down into **packages**, each grouping:
-- **Interfaces (internal & external)**
-- **Storage layouts**
-- **Internal logic contracts**
-- **External package contracts**
+- Easier to audit and maintain
 
-### Facets vs Packages
-- **Facets:** EIP-2535 units of function selectors.  
-- **Packages:** Higher-level modules that bundle facets with metadata, storage definitions, and tooling.
+- Highly composable and upgradable
 
-## Standard Package Structure
-```bash
-/contracts/Package
-  ├── IPackageInternal.sol      # Internal interface: structs, enums, events, errors
-  ├── IPackage.sol              # External interface: external functions (inherits IPackageInternal)
-  ├── PackageStorage.sol        # Library: Storage layout & slot management
-  ├── PackageInternal.sol       # Abstract Contract: Internal logic implementations (inherits IPackageInternal & imports PackageStorage)
-  └── Package.sol               # Contract: deployable package (inherits IPackage and PackageInternal)
+- Compatible with tooling for version management and deployment
+
+- Ready for integration into larger smart contract systems using the FeverTokens Hub
+
+---
+
+## **💎 Diamond Architecture Principles**
+
+Each package is a modular facet of a Diamond and adheres to the following design principles:
+
+- **Separation of Concerns**: Interfaces, logic, and storage are explicitly decoupled.
+
+- **Interface Definitions**: Cleanly specified internal and external interfaces for integration and documentation.
+
+- **Storage Management**: Explicit and namespaced layout management using custom storage slots.
+
+- **Upgradeable Logic**: Built to support safe upgrades via the Diamond proxy architecture.
+
+---
+
+## **📦 Package Structure**
+
+Each package must include **five distinct components**, each as a separate file:
+
+| File                     | Purpose                                                   |
+| ------------------------ | --------------------------------------------------------- |
+| `IMyPackageInternal.sol` | Internal interface: declares events, structs, enums       |
+| `IMyPackage.sol`         | External interface: defines externally callable functions |
+| `MyPackageStorage.sol`   | Storage layout using diamond storage pattern              |
+| `MyPackageInternal.sol`  | Internal logic: uses and modifies package storage         |
+| `MyPackagePackage.sol`   | External-facing contract: wraps internal logic            |
+
+---
+
+### **🔹 Internal Interface – `IMyPackageInternal.sol`**
+
+Defines the internal elements of the package: enums, structs, events, and errors.
+
+```solidity
+interface IMyPackageInternal {
+ enum MyEnum { Option1, Option2 }
+
+    struct MyStruct1 {
+        uint256 value;
+        address addr;
+    }
+
+    struct MyStruct2 {
+        bool active;
+        uint256 count;
+    }
+
+    event MyEvent1(address indexed sender, uint256 value);
+    event MyEvent2(address indexed actor, bool action);
+
+}
 ```
 
-### Implementation Pattern
+---
 
-The framework implements this pattern across various domains:
+### **🔹 External Interface – `IMyPackage.sol`**
 
-- **Base Package**: The `contracts/package/PackageInternal.sol` provides the foundation for all packages, integrating initialization patterns, reentrancy protection, and meta-transaction support.
+Inherits the internal interface and exposes external functions.
 
-- **Domain-Specific Packages**: Multiple domain packages like `access/ownable`, `token/ERC20`, and `security/ReentrancyGuard` follow the standard structure.
+```solidity
+import "./IMyPackageInternal.sol";
 
-### Real-World Example
-
-For example, the ERC20 token package follows this pattern:
-```bash
-/contracts/token/ERC20
-  ├── base/
-  │   ├── IERC20BaseInternal.sol    # Internal token interfaces
-  │   ├── IERC20Base.sol            # External token interfaces
-  │   ├── ERC20BaseStorage.sol      # Token storage layout
-  │   ├── ERC20BaseInternal.sol     # Internal implementations
-  │   └── ERC20Base.sol             # Deployable base token
-  ├── extensions/                   # Optional token extensions
-  └── ERC20.sol                     # Complete token implementation
+interface IMyPackage is IMyPackageInternal {
+ function myFunction1(uint256 value1) external;
+ function myFunction2(address addr, uint256 value2) external;
+}
 ```
 
-## Diamond Standard Integration
+---
 
-The framework builds on EIP-2535 (Diamond Standard) as its foundation:
+### **🔹 Storage Layout – `MyPackageStorage.sol`**
 
-- **Diamond Proxy**: The `contracts/diamond/Diamond.sol` serves as the core proxy implementation.
-- **Diamond Facets**: Components like `DiamondCut`, `DiamondLoupe`, and `DiamondFallback` handle different aspects of the diamond pattern.
-- **Package Integration**: Packages are deployed as facets that can be added to diamonds through the diamond cut mechanism.
+Encapsulates the state in a `Layout` struct, using a dedicated slot for namespacing based on [ERC-7201](https://eips.ethereum.org/EIPS/eip-7201).
 
-### Diamond Architecture Benefits
+```solidity
+import "./IMyPackageInternal.sol";
 
-1. **Unlimited Contract Size**: Overcome the 24KB contract size limit by distributing logic across facets
-2. **Selective Upgradeability**: Replace or upgrade specific facets without touching others
-3. **Function Collision Prevention**: Diamond's selector-based routing prevents function signature collisions
-4. **Flexible Storage**: Structured storage patterns prevent slot collisions between packages
+library MyPackageStorage {
 
-## Key Benefits
-- **Modularity & independent upgradeability**
+ struct Layout {
+    uint256 value1;
+    address addr1;
+    uint256 value2;
+    MyStruct1 myObject1;
+    bool active;
+ }
 
-- **Enhanced flexibility & adaptability**
+    bytes32 constant STORAGE_SLOT =
+        keccak256(abi.encode(uint256(keccak256("company.storage.MyPackage")) - 1)) & ~bytes32(uint256(0xff));
 
-- **Unified terminology & efficient data management**
+    function layout() internal pure returns (Layout storage l) {
+        bytes32 slot = STORAGE_SLOT;
+        assembly {
+            l.slot := slot
+        }
+    }
 
-- **Seamless on-chain + off-chain (oracle & multi-chain) support**
-
-## Getting Started
-### Prerequisites
-- Node.js v16+
-- Hardhat v2.x or Foundry v0.5+
-- Solidity ^0.8.0
-
-### Installation
-```bash
-git clone https://github.com/fevertokens/fevertokens-packages.git
-cd fevertokens-packages
-npm install
-npm run compile
+}
 ```
 
-## License
+---
 
-This project is licensed under the [MIT License](./LICENSE). You are free to use, modify, and distribute it under the conditions specified in the license file.
+### **🔹 Internal Logic – `MyPackageInternal.sol`**
+
+Implements the core business logic using the namespaced storage.
+
+```solidity
+import "./IMyPackageInternal.sol";
+import {MyPackageStorage} from "./MyPackageStorage.sol";
+
+abstract contract MyPackageInternal is IMyPackageInternal {
+ using MyPackageStorage for MyPackageStorage.Layout;
+
+    function _myFunction1(uint256 value1) internal {
+        MyPackageStorage.Layout storage l = MyPackageStorage.layout();
+        // Logic using l.value1
+    }
+
+    function _myFunction2(address addr, uint256 value2) internal {
+        MyPackageStorage.Layout storage l = MyPackageStorage.layout();
+        // Logic using l.addr1 and l.value2
+    }
+
+}
+```
+
+---
+
+### **🔹 Package Entry Point – `MyPackage.sol`**
+
+Implements external interface and delegates to internal logic.
+
+```
+import {IMyPackage} from "./IMyPackage.sol";
+import {MyPackageInternal} from "./MyPackageInternal.sol";
+
+contract MyPackagePackage is IMyPackage, MyPackageInternal {
+    function myFunction1(uint256 value1_) external override {
+    _myFunction1(value1_);
+    }
+
+    function myFunction2(address addr_, uint256 value2_) external override {
+        _myFunction2(addr_, value2_);
+    }
+
+}
+```
+
+---
+
+## **✅ Best Practices**
+
+- **Function naming**: Prefix internal functions with `_` (e.g., `_myFunction1`) for clarity.
+
+- **External function implementation**: Avoid direct calls to internal functions; always use the `_` prefixed versions. Use `override` to ensure compliance with the interface.
+
+- **Parameter naming**: Use trailing underscores (e.g., `value1_`) to avoid variable shadowing.
+
+- **Testing**: Unit-test each package and integration-test multiple packages as part of a system.
+
+- **Documentation**: Comment the purpose and logic of each package, especially for critical functions.
+
+- **Storage safety**: Never change the order or type of variables in a layout struct once deployed.
+
+---
+
+## **🚀 Create Your Own Package (Quick Guide)**
+
+1. **Define internal elements** in `IMyPackageInternal.sol`:
+
+   - Enums, structs, events
+
+2. **Define external interface** in `IMyPackage.sol`:
+
+   - Extend the internal interface
+
+   - Declare externally accessible functions
+
+3. **Create a storage layout** in `MyPackageStorage.sol`:
+
+   - Add a namespaced `Layout` struct
+
+   - Declare the storage slot using `keccak256`
+
+4. **Implement internal logic** in `MyPackageInternal.sol`:
+
+   - Use the layout via `MyPackageStorage.layout()`
+
+   - Implement internal helper methods
+
+5. **Build your package** in `MyPackagePackage.sol`:
+
+   - Inherit from `IMyPackage` and `MyPackageInternal`
+
+   - Implement external methods by calling internal functions
+
+---
+
+## **📚 License**
+
+Open-source under [MIT License](./LICENSE). You are free to use, modify, and integrate in compliance with the license.
