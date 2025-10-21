@@ -34,13 +34,13 @@ Each package is a modular facet of a Diamond and adheres to the following design
 
 Each package must include **five distinct components**, each as a separate file:
 
-| File                     | Purpose                                                   |
-| ------------------------ | --------------------------------------------------------- |
-| `IMyPackageInternal.sol` | Internal interface: declares events, structs, enums       |
-| `IMyPackage.sol`         | External interface: defines externally callable functions |
-| `MyPackageStorage.sol`   | Storage layout using diamond storage pattern              |
-| `MyPackageInternal.sol`  | Internal logic: uses and modifies package storage         |
-| `MyPackagePackage.sol`   | External-facing contract: wraps internal logic            |
+| File                     | Purpose                                                                |
+| ------------------------ | ---------------------------------------------------------------------- |
+| `IMyPackageInternal.sol` | Internal interface: declares structs, enums, events, and custom errors |
+| `IMyPackage.sol`         | External interface: defines externally callable functions              |
+| `MyPackageStorage.sol`   | Storage layout using diamond storage pattern                           |
+| `MyPackageInternal.sol`  | Internal logic: uses and modifies package storage                      |
+| `MyPackagePackage.sol`   | External-facing contract: wraps internal logic                         |
 
 ---
 

@@ -3,14 +3,9 @@
 
 pragma solidity ^0.8.20;
 
-import { EnumerableSet } from "../../data/EnumerableSet.sol";
+import { RoleData } from "./IAccessControlInternal.sol";
 
 library AccessControlStorage {
-    struct RoleData {
-        EnumerableSet.AddressSet roleMembers;
-        bytes32 adminRole;
-    }
-
     struct Layout {
         mapping(bytes32 => RoleData) roles;
     }

@@ -2,6 +2,11 @@
 // FeverTokens Contracts v1.0.0
 
 pragma solidity ^0.8.20;
+import { EnumerableSet } from "../../data/EnumerableSet.sol";
+struct RoleData {
+    EnumerableSet.AddressSet roleMembers;
+    bytes32 adminRole;
+}
 
 interface IAccessControlInternal {
     /**
