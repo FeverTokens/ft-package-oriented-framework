@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: MIT
-// FeverTokens Contracts v1.0.0
 
-pragma solidity ^0.8.20;
+pragma solidity 0.8.26;
 
-import { Proxy } from "../Proxy.sol";
-import { IDiamondBase } from "./IDiamondBase.sol";
-import { DiamondBaseStorage } from "./DiamondBaseStorage.sol";
+import {Proxy} from "../proxy/Proxy.sol";
+import {IDiamondBase} from "./IDiamondBase.sol";
+import {DiamondBaseStorage} from "./DiamondBaseStorage.sol";
 
 /**
  * @title EIP-2535 "Diamond" proxy base contract
@@ -15,20 +14,9 @@ abstract contract DiamondBase is IDiamondBase, Proxy {
     /**
      * @inheritdoc Proxy
      */
-    function _getImplementation()
-        internal
-        view
-        virtual
-        override
-        returns (address implementation)
-    {
-        // inline storage layout retrieval uses less gas
-        DiamondBaseStorage.Layout storage l;
-        bytes32 slot = DiamondBaseStorage.STORAGE_SLOT;
-        assembly {
-            l.slot := slot
-        }
+    function _getImplementation() internal view override returns (address implementation) {
+        DiamondBaseStorage.Layout storage $ = DiamondBaseStorage.layout();
 
-        implementation = address(bytes20(l.facets[msg.sig]));
+        implementation = address(bytes20($.facets[msg.sig]));
     }
 }

@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 // FeverTokens Contracts v1.0.0
 
-pragma solidity ^0.8.20;
+pragma solidity 0.8.26;
 
-import { IReentrancyGuard } from "./IReentrancyGuard.sol";
-import { ReentrancyGuardInternal } from "./ReentrancyGuardInternal.sol";
+import {IReentrancyGuard} from "./IReentrancyGuard.sol";
+import {ReentrancyGuardInternal} from "./ReentrancyGuardInternal.sol";
 
 /**
  * @title Contract module that helps prevent reentrant calls to a function.
@@ -22,6 +22,4 @@ import { ReentrancyGuardInternal } from "./ReentrancyGuardInternal.sol";
  * to protect against it, check out our blog post
  * https://blog.openzeppelin.com/reentrancy-after-istanbul/[Reentrancy After Istanbul].
  */
-abstract contract ReentrancyGuard is IReentrancyGuard, ReentrancyGuardInternal {
-
-}
+abstract contract ReentrancyGuard is IReentrancyGuard, ReentrancyGuardInternal {}

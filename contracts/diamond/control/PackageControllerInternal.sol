@@ -1,18 +1,35 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.0;
+pragma solidity 0.8.26;
 
-import { AddressUtils } from "../../utils/AddressUtils.sol";
-import { DiamondBaseStorage } from "../base/DiamondBaseStorage.sol";
-import { IDiamondCutInternal } from "./IDiamondCutInternal.sol";
+import {DiamondBaseStorage} from "../base/DiamondBaseStorage.sol";
+import {FacetCutAction, FacetCut, IPackageControllerInternal} from "./IPackageControllerInternal.sol";
+import {OwnableInternal} from "../../access/ownable/OwnableInternal.sol";
+import {InitializableInternal} from "../../initializable/InitializableInternal.sol";
 
-abstract contract DiamondCutInternal is IDiamondCutInternal {
-    using AddressUtils for address;
-
+/**
+ * @title PackageControllerInternal: EIP-2535 "Diamond" proxy update internal contract
+ * @dev inspired from https://github.com/mudgen/diamond-2 (MIT license)
+ */
+abstract contract PackageControllerInternal is
+    IPackageControllerInternal,
+    InitializableInternal,
+    OwnableInternal
+{
     bytes32 private constant CLEAR_ADDRESS_MASK =
         bytes32(uint256(0xffffffffffffffffffffffff));
     bytes32 private constant CLEAR_SELECTOR_MASK =
         bytes32(uint256(0xffffffff << 224));
+
+    function __PackageController_init(address owner) internal {
+        __PackageController_init_unchained();
+        __OwnableInternal_init(owner);
+    }
+
+    function __PackageController_init_unchained()
+        internal
+        initializer(DiamondBaseStorage.STORAGE_SLOT)
+    {}
 
     /**
      * @notice update functions callable on Diamond proxy
@@ -24,53 +41,66 @@ abstract contract DiamondCutInternal is IDiamondCutInternal {
         FacetCut[] memory facetCuts,
         address target,
         bytes memory data
-    ) internal virtual {
-        DiamondBaseStorage.Layout storage l = DiamondBaseStorage.layout();
+    ) internal {
+        // Only owner or during construction (when contract has no code yet)
+        uint256 contractSize;
+        assembly {
+            contractSize := extcodesize(address())
+        }
+        
+        if (contractSize > 0 && msg.sender != _owner()) {
+            revert("PackageController: Must be contract owner");
+        }
+
+        DiamondBaseStorage.Layout storage $ = DiamondBaseStorage.layout();
 
         unchecked {
-            uint256 originalSelectorCount = l.selectorCount;
+            uint256 originalSelectorCount = $.selectorCount;
             uint256 selectorCount = originalSelectorCount;
             bytes32 selectorSlot;
 
             // Check if last selector slot is not full
             if (selectorCount & 7 > 0) {
                 // get last selectorSlot
-                selectorSlot = l.selectorSlots[selectorCount >> 3];
+                selectorSlot = $.selectorSlots[selectorCount >> 3];
             }
 
             for (uint256 i; i < facetCuts.length; i++) {
                 FacetCut memory facetCut = facetCuts[i];
                 FacetCutAction action = facetCut.action;
 
-                if (facetCut.selectors.length == 0)
-                    revert DiamondCut__SelectorNotSpecified();
+                if (facetCut.selectors.length == 0) {
+                    revert PackageControllerSelectorNotSpecified();
+                }
 
                 if (action == FacetCutAction.ADD) {
                     (selectorCount, selectorSlot) = _addFacetSelectors(
-                        l,
+                        $,
                         selectorCount,
                         selectorSlot,
                         facetCut
                     );
                 } else if (action == FacetCutAction.REPLACE) {
-                    _replaceFacetSelectors(l, facetCut);
+                    _replaceFacetSelectors($, facetCut);
                 } else if (action == FacetCutAction.REMOVE) {
                     (selectorCount, selectorSlot) = _removeFacetSelectors(
-                        l,
+                        $,
                         selectorCount,
                         selectorSlot,
                         facetCut
                     );
+                } else {
+                    revert PackageControllerInvalidFacetAction();
                 }
             }
 
             if (selectorCount != originalSelectorCount) {
-                l.selectorCount = uint16(selectorCount);
+                $.selectorCount = uint16(selectorCount);
             }
 
             // If last selector slot is not full
             if (selectorCount & 7 > 0) {
-                l.selectorSlots[selectorCount >> 3] = selectorSlot;
+                $.selectorSlots[selectorCount >> 3] = selectorSlot;
             }
 
             emit DiamondCut(facetCuts, target, data);
@@ -79,7 +109,7 @@ abstract contract DiamondCutInternal is IDiamondCutInternal {
     }
 
     function _addFacetSelectors(
-        DiamondBaseStorage.Layout storage l,
+        DiamondBaseStorage.Layout storage $,
         uint256 selectorCount,
         bytes32 selectorSlot,
         FacetCut memory facetCut
@@ -87,18 +117,18 @@ abstract contract DiamondCutInternal is IDiamondCutInternal {
         unchecked {
             if (
                 facetCut.target != address(this) &&
-                !facetCut.target.isContract()
-            ) revert DiamondCut__TargetHasNoCode();
+                !_isContract(facetCut.target)
+            ) revert PackageControllerTargetHasNoCode();
 
             for (uint256 i; i < facetCut.selectors.length; i++) {
                 bytes4 selector = facetCut.selectors[i];
-                bytes32 oldFacet = l.facets[selector];
+                bytes32 oldFacet = $.facets[selector];
 
                 if (address(bytes20(oldFacet)) != address(0))
-                    revert DiamondCut__SelectorAlreadyAdded();
+                    revert PackageControllerSelectorAlreadyAdded();
 
                 // add facet for selector
-                l.facets[selector] =
+                $.facets[selector] =
                     bytes20(facetCut.target) |
                     bytes32(selectorCount);
                 uint256 selectorInSlotPosition = (selectorCount & 7) << 5;
@@ -111,7 +141,7 @@ abstract contract DiamondCutInternal is IDiamondCutInternal {
 
                 // if slot is full then write it to storage
                 if (selectorInSlotPosition == 224) {
-                    l.selectorSlots[selectorCount >> 3] = selectorSlot;
+                    $.selectorSlots[selectorCount >> 3] = selectorSlot;
                     selectorSlot = 0;
                 }
 
@@ -123,31 +153,33 @@ abstract contract DiamondCutInternal is IDiamondCutInternal {
     }
 
     function _removeFacetSelectors(
-        DiamondBaseStorage.Layout storage l,
+        DiamondBaseStorage.Layout storage $,
         uint256 selectorCount,
         bytes32 selectorSlot,
         FacetCut memory facetCut
     ) internal returns (uint256, bytes32) {
         unchecked {
             if (facetCut.target != address(0))
-                revert DiamondCut__RemoveTargetNotZeroAddress();
+                revert PackageControllerRemoveTargetNotZeroAddress();
 
             uint256 selectorSlotCount = selectorCount >> 3;
             uint256 selectorInSlotIndex = selectorCount & 7;
 
             for (uint256 i; i < facetCut.selectors.length; i++) {
                 bytes4 selector = facetCut.selectors[i];
-                bytes32 oldFacet = l.facets[selector];
+                bytes32 oldFacet = $.facets[selector];
 
                 if (address(bytes20(oldFacet)) == address(0))
-                    revert DiamondCut__SelectorNotFound();
+                    revert PackageControllerSelectorNotFound();
 
-                if (address(bytes20(oldFacet)) == address(this))
-                    revert DiamondCut__SelectorIsImmutable();
+                if (
+                    address(bytes20(oldFacet)) == address(this) ||
+                    selector == 0x1f931c1c
+                ) revert PackageControllerSelectorIsImmutable(); // 0x1f931c1c == diamondCut
 
                 if (selectorSlot == 0) {
                     selectorSlotCount--;
-                    selectorSlot = l.selectorSlots[selectorSlotCount];
+                    selectorSlot = $.selectorSlots[selectorSlotCount];
                     selectorInSlotIndex = 7;
                 } else {
                     selectorInSlotIndex--;
@@ -159,26 +191,26 @@ abstract contract DiamondCutInternal is IDiamondCutInternal {
 
                 // adding a block here prevents stack too deep error
                 {
-                    // replace selector with last selector in l.facets
+                    // replace selector with last selector in $.facets
                     lastSelector = bytes4(
                         selectorSlot << (selectorInSlotIndex << 5)
                     );
 
                     if (lastSelector != selector) {
                         // update last selector slot position info
-                        l.facets[lastSelector] =
+                        $.facets[lastSelector] =
                             (oldFacet & CLEAR_ADDRESS_MASK) |
-                            bytes20(l.facets[lastSelector]);
+                            bytes20($.facets[lastSelector]);
                     }
 
-                    delete l.facets[selector];
+                    delete $.facets[selector];
                     uint256 oldSelectorCount = uint16(uint256(oldFacet));
                     oldSelectorsSlotCount = oldSelectorCount >> 3;
                     oldSelectorInSlotPosition = (oldSelectorCount & 7) << 5;
                 }
 
                 if (oldSelectorsSlotCount != selectorSlotCount) {
-                    bytes32 oldSelectorSlot = l.selectorSlots[
+                    bytes32 oldSelectorSlot = $.selectorSlots[
                         oldSelectorsSlotCount
                     ];
 
@@ -190,7 +222,7 @@ abstract contract DiamondCutInternal is IDiamondCutInternal {
                         (bytes32(lastSelector) >> oldSelectorInSlotPosition);
 
                     // update storage with the modified slot
-                    l.selectorSlots[oldSelectorsSlotCount] = oldSelectorSlot;
+                    $.selectorSlots[oldSelectorsSlotCount] = oldSelectorSlot;
                 } else {
                     // clears the selector we are deleting and puts the last selector in its place.
                     selectorSlot =
@@ -201,7 +233,7 @@ abstract contract DiamondCutInternal is IDiamondCutInternal {
                 }
 
                 if (selectorInSlotIndex == 0) {
-                    delete l.selectorSlots[selectorSlotCount];
+                    delete $.selectorSlots[selectorSlotCount];
                     selectorSlot = 0;
                 }
             }
@@ -213,27 +245,27 @@ abstract contract DiamondCutInternal is IDiamondCutInternal {
     }
 
     function _replaceFacetSelectors(
-        DiamondBaseStorage.Layout storage l,
+        DiamondBaseStorage.Layout storage $,
         FacetCut memory facetCut
     ) internal {
         unchecked {
-            if (!facetCut.target.isContract())
-                revert DiamondCut__TargetHasNoCode();
+            if (!_isContract(facetCut.target))
+                revert PackageControllerTargetHasNoCode();
 
             for (uint256 i; i < facetCut.selectors.length; i++) {
                 bytes4 selector = facetCut.selectors[i];
-                bytes32 oldFacet = l.facets[selector];
+                bytes32 oldFacet = $.facets[selector];
                 address oldFacetAddress = address(bytes20(oldFacet));
 
                 if (oldFacetAddress == address(0))
-                    revert DiamondCut__SelectorNotFound();
-                if (oldFacetAddress == address(this))
-                    revert DiamondCut__SelectorIsImmutable();
+                    revert PackageControllerSelectorNotFound();
+                if (oldFacetAddress == address(this) || selector == 0x1f931c1c)
+                    revert PackageControllerSelectorIsImmutable(); // 0x1f931c1c == diamondCut
                 if (oldFacetAddress == facetCut.target)
-                    revert DiamondCut__ReplaceTargetIsIdentical();
+                    revert PackageControllerReplaceTargetIsIdentical();
 
                 // replace old facet address
-                l.facets[selector] =
+                $.facets[selector] =
                     (oldFacet & CLEAR_ADDRESS_MASK) |
                     bytes20(facetCut.target);
             }
@@ -242,11 +274,12 @@ abstract contract DiamondCutInternal is IDiamondCutInternal {
 
     function _initialize(address target, bytes memory data) private {
         if ((target == address(0)) != (data.length == 0))
-            revert DiamondCut__InvalidInitializationParameters();
+            revert PackageControllerInvalidInitializationParameters();
 
         if (target != address(0)) {
             if (target != address(this)) {
-                if (!target.isContract()) revert DiamondCut__TargetHasNoCode();
+                if (!_isContract(target))
+                    revert PackageControllerTargetHasNoCode();
             }
 
             (bool success, ) = target.delegatecall(data);
@@ -258,5 +291,13 @@ abstract contract DiamondCutInternal is IDiamondCutInternal {
                 }
             }
         }
+    }
+
+    function _isContract(address account) internal view returns (bool) {
+        uint256 size;
+        assembly {
+            size := extcodesize(account)
+        }
+        return size > 0;
     }
 }

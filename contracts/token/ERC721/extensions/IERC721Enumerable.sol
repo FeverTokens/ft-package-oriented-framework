@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 // FeverTokens Contracts v1.0.0
 
-pragma solidity ^0.8.20;
+pragma solidity 0.8.26;
 
-import { IERC721EnumerableInternal } from "./IERC721EnumerableInternal.sol";
+import {IERC721EnumerableInternal} from "./IERC721EnumerableInternal.sol";
 
 interface IERC721Enumerable is IERC721EnumerableInternal {
     /**
@@ -18,17 +18,12 @@ interface IERC721Enumerable is IERC721EnumerableInternal {
      * @param index position in owner's token list to query
      * @return tokenId id of retrieved token
      */
-    function tokenOfOwnerByIndex(
-        address owner,
-        uint256 index
-    ) external view returns (uint256 tokenId);
+    function tokenOfOwnerByIndex(address owner, uint256 index) external view returns (uint256 tokenId);
 
     /**
      * @notice get token at given internal storage index
      * @param index position in global token list to query
      * @return tokenId id of retrieved token
      */
-    function tokenByIndex(
-        uint256 index
-    ) external view returns (uint256 tokenId);
+    function tokenByIndex(uint256 index) external view returns (uint256 tokenId);
 }

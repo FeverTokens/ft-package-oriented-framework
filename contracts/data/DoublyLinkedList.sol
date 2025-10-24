@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 // FeverTokens Contracts v1.0.0
 
-pragma solidity ^0.8.20;
+pragma solidity 0.8.26;
 
 /**
  * @title Doubly linked list implementation with enumeration functions
@@ -34,80 +34,39 @@ library DoublyLinkedList {
      */
     error DoublyLinkedList__NonExistentEntry();
 
-    function contains(
-        Bytes32List storage self,
-        bytes32 value
-    ) internal view returns (bool) {
+    function contains(Bytes32List storage self, bytes32 value) internal view returns (bool) {
         return _contains(self._inner, value);
     }
 
-    function contains(
-        AddressList storage self,
-        address value
-    ) internal view returns (bool) {
+    function contains(AddressList storage self, address value) internal view returns (bool) {
         return _contains(self._inner, bytes32(uint256(uint160(value))));
     }
 
-    function contains(
-        Uint256List storage self,
-        uint256 value
-    ) internal view returns (bool) {
+    function contains(Uint256List storage self, uint256 value) internal view returns (bool) {
         return _contains(self._inner, bytes32(value));
     }
 
-    function prev(
-        Bytes32List storage self,
-        bytes32 value
-    ) internal view returns (bytes32) {
+    function prev(Bytes32List storage self, bytes32 value) internal view returns (bytes32) {
         return _prev(self._inner, value);
     }
 
-    function prev(
-        AddressList storage self,
-        address value
-    ) internal view returns (address) {
-        return
-            address(
-                uint160(
-                    uint256(
-                        _prev(self._inner, bytes32(uint256(uint160(value))))
-                    )
-                )
-            );
+    function prev(AddressList storage self, address value) internal view returns (address) {
+        return address(uint160(uint256(_prev(self._inner, bytes32(uint256(uint160(value)))))));
     }
 
-    function prev(
-        Uint256List storage self,
-        uint256 value
-    ) internal view returns (uint256) {
+    function prev(Uint256List storage self, uint256 value) internal view returns (uint256) {
         return uint256(_prev(self._inner, bytes32(value)));
     }
 
-    function next(
-        Bytes32List storage self,
-        bytes32 value
-    ) internal view returns (bytes32) {
+    function next(Bytes32List storage self, bytes32 value) internal view returns (bytes32) {
         return _next(self._inner, value);
     }
 
-    function next(
-        AddressList storage self,
-        address value
-    ) internal view returns (address) {
-        return
-            address(
-                uint160(
-                    uint256(
-                        _next(self._inner, bytes32(uint256(uint160(value))))
-                    )
-                )
-            );
+    function next(AddressList storage self, address value) internal view returns (address) {
+        return address(uint160(uint256(_next(self._inner, bytes32(uint256(uint160(value)))))));
     }
 
-    function next(
-        Uint256List storage self,
-        uint256 value
-    ) internal view returns (uint256) {
+    function next(Uint256List storage self, uint256 value) internal view returns (uint256) {
         return uint256(_next(self._inner, bytes32(value)));
     }
 
@@ -124,11 +83,7 @@ library DoublyLinkedList {
         address nextValue,
         address newValue
     ) internal returns (bool status) {
-        status = _insertBefore(
-            self._inner,
-            bytes32(uint256(uint160(nextValue))),
-            bytes32(uint256(uint160(newValue)))
-        );
+        status = _insertBefore(self._inner, bytes32(uint256(uint160(nextValue))), bytes32(uint256(uint160(newValue))));
     }
 
     function insertBefore(
@@ -136,63 +91,30 @@ library DoublyLinkedList {
         uint256 nextValue,
         uint256 newValue
     ) internal returns (bool status) {
-        status = _insertBefore(
-            self._inner,
-            bytes32(nextValue),
-            bytes32(newValue)
-        );
+        status = _insertBefore(self._inner, bytes32(nextValue), bytes32(newValue));
     }
 
-    function insertAfter(
-        Bytes32List storage self,
-        bytes32 prevValue,
-        bytes32 newValue
-    ) internal returns (bool status) {
+    function insertAfter(Bytes32List storage self, bytes32 prevValue, bytes32 newValue) internal returns (bool status) {
         status = _insertAfter(self._inner, prevValue, newValue);
     }
 
-    function insertAfter(
-        AddressList storage self,
-        address prevValue,
-        address newValue
-    ) internal returns (bool status) {
-        status = _insertAfter(
-            self._inner,
-            bytes32(uint256(uint160(prevValue))),
-            bytes32(uint256(uint160(newValue)))
-        );
+    function insertAfter(AddressList storage self, address prevValue, address newValue) internal returns (bool status) {
+        status = _insertAfter(self._inner, bytes32(uint256(uint160(prevValue))), bytes32(uint256(uint160(newValue))));
     }
 
-    function insertAfter(
-        Uint256List storage self,
-        uint256 prevValue,
-        uint256 newValue
-    ) internal returns (bool status) {
-        status = _insertAfter(
-            self._inner,
-            bytes32(prevValue),
-            bytes32(newValue)
-        );
+    function insertAfter(Uint256List storage self, uint256 prevValue, uint256 newValue) internal returns (bool status) {
+        status = _insertAfter(self._inner, bytes32(prevValue), bytes32(newValue));
     }
 
-    function push(
-        Bytes32List storage self,
-        bytes32 value
-    ) internal returns (bool status) {
+    function push(Bytes32List storage self, bytes32 value) internal returns (bool status) {
         status = _push(self._inner, value);
     }
 
-    function push(
-        AddressList storage self,
-        address value
-    ) internal returns (bool status) {
+    function push(AddressList storage self, address value) internal returns (bool status) {
         status = _push(self._inner, bytes32(uint256(uint160(value))));
     }
 
-    function push(
-        Uint256List storage self,
-        uint256 value
-    ) internal returns (bool status) {
+    function push(Uint256List storage self, uint256 value) internal returns (bool status) {
         status = _push(self._inner, bytes32(value));
     }
 
@@ -220,107 +142,56 @@ library DoublyLinkedList {
         value = uint256(_shift(self._inner));
     }
 
-    function unshift(
-        Bytes32List storage self,
-        bytes32 value
-    ) internal returns (bool status) {
+    function unshift(Bytes32List storage self, bytes32 value) internal returns (bool status) {
         status = _unshift(self._inner, value);
     }
 
-    function unshift(
-        AddressList storage self,
-        address value
-    ) internal returns (bool status) {
+    function unshift(AddressList storage self, address value) internal returns (bool status) {
         status = _unshift(self._inner, bytes32(uint256(uint160(value))));
     }
 
-    function unshift(
-        Uint256List storage self,
-        uint256 value
-    ) internal returns (bool status) {
+    function unshift(Uint256List storage self, uint256 value) internal returns (bool status) {
         status = _unshift(self._inner, bytes32(value));
     }
 
-    function remove(
-        Bytes32List storage self,
-        bytes32 value
-    ) internal returns (bool status) {
+    function remove(Bytes32List storage self, bytes32 value) internal returns (bool status) {
         status = _remove(self._inner, value);
     }
 
-    function remove(
-        AddressList storage self,
-        address value
-    ) internal returns (bool status) {
+    function remove(AddressList storage self, address value) internal returns (bool status) {
         status = _remove(self._inner, bytes32(uint256(uint160(value))));
     }
 
-    function remove(
-        Uint256List storage self,
-        uint256 value
-    ) internal returns (bool status) {
+    function remove(Uint256List storage self, uint256 value) internal returns (bool status) {
         status = _remove(self._inner, bytes32(value));
     }
 
-    function replace(
-        Bytes32List storage self,
-        bytes32 oldValue,
-        bytes32 newValue
-    ) internal returns (bool status) {
+    function replace(Bytes32List storage self, bytes32 oldValue, bytes32 newValue) internal returns (bool status) {
         status = _replace(self._inner, oldValue, newValue);
     }
 
-    function replace(
-        AddressList storage self,
-        address oldValue,
-        address newValue
-    ) internal returns (bool status) {
-        status = _replace(
-            self._inner,
-            bytes32(uint256(uint160(oldValue))),
-            bytes32(uint256(uint160(newValue)))
-        );
+    function replace(AddressList storage self, address oldValue, address newValue) internal returns (bool status) {
+        status = _replace(self._inner, bytes32(uint256(uint160(oldValue))), bytes32(uint256(uint160(newValue))));
     }
 
-    function replace(
-        Uint256List storage self,
-        uint256 oldValue,
-        uint256 newValue
-    ) internal returns (bool status) {
+    function replace(Uint256List storage self, uint256 oldValue, uint256 newValue) internal returns (bool status) {
         status = _replace(self._inner, bytes32(oldValue), bytes32(newValue));
     }
 
-    function _contains(
-        DoublyLinkedListInternal storage self,
-        bytes32 value
-    ) private view returns (bool) {
-        return
-            value != 0 &&
-            (self._nextValues[value] != 0 || self._prevValues[0] == value);
+    function _contains(DoublyLinkedListInternal storage self, bytes32 value) private view returns (bool) {
+        return value != 0 && (self._nextValues[value] != 0 || self._prevValues[0] == value);
     }
 
-    function _prev(
-        DoublyLinkedListInternal storage self,
-        bytes32 nextValue
-    ) private view returns (bytes32 prevValue) {
+    function _prev(DoublyLinkedListInternal storage self, bytes32 nextValue) private view returns (bytes32 prevValue) {
         prevValue = self._prevValues[nextValue];
-        if (
-            nextValue != 0 &&
-            prevValue == 0 &&
-            _next(self, prevValue) != nextValue
-        ) revert DoublyLinkedList__NonExistentEntry();
+        if (nextValue != 0 && prevValue == 0 && _next(self, prevValue) != nextValue)
+            revert("DoublyLinkedList: Non Existent Entry");
     }
 
-    function _next(
-        DoublyLinkedListInternal storage self,
-        bytes32 prevValue
-    ) private view returns (bytes32 nextValue) {
+    function _next(DoublyLinkedListInternal storage self, bytes32 prevValue) private view returns (bytes32 nextValue) {
         nextValue = self._nextValues[prevValue];
-        if (
-            prevValue != 0 &&
-            nextValue == 0 &&
-            _prev(self, nextValue) != prevValue
-        ) revert DoublyLinkedList__NonExistentEntry();
+        if (prevValue != 0 && nextValue == 0 && _prev(self, nextValue) != prevValue)
+            revert("DoublyLinkedList: Non Existent Entry");
     }
 
     function _insertBefore(
@@ -328,12 +199,7 @@ library DoublyLinkedList {
         bytes32 nextValue,
         bytes32 newValue
     ) private returns (bool status) {
-        status = _insertBetween(
-            self,
-            _prev(self, nextValue),
-            nextValue,
-            newValue
-        );
+        status = _insertBetween(self, _prev(self, nextValue), nextValue, newValue);
     }
 
     function _insertAfter(
@@ -341,12 +207,7 @@ library DoublyLinkedList {
         bytes32 prevValue,
         bytes32 newValue
     ) private returns (bool status) {
-        status = _insertBetween(
-            self,
-            prevValue,
-            _next(self, prevValue),
-            newValue
-        );
+        status = _insertBetween(self, prevValue, _next(self, prevValue), newValue);
     }
 
     function _insertBetween(
@@ -355,7 +216,7 @@ library DoublyLinkedList {
         bytes32 nextValue,
         bytes32 newValue
     ) private returns (bool status) {
-        if (newValue == 0) revert DoublyLinkedList__InvalidInput();
+        if (newValue == 0) revert("DoublyLinkedList: Invalid Input");
 
         if (!_contains(self, newValue)) {
             _link(self, prevValue, newValue);
@@ -364,38 +225,25 @@ library DoublyLinkedList {
         }
     }
 
-    function _push(
-        DoublyLinkedListInternal storage self,
-        bytes32 value
-    ) private returns (bool status) {
+    function _push(DoublyLinkedListInternal storage self, bytes32 value) private returns (bool status) {
         status = _insertBetween(self, _prev(self, 0), 0, value);
     }
 
-    function _pop(
-        DoublyLinkedListInternal storage self
-    ) private returns (bytes32 value) {
+    function _pop(DoublyLinkedListInternal storage self) private returns (bytes32 value) {
         value = _prev(self, 0);
         _remove(self, value);
     }
 
-    function _shift(
-        DoublyLinkedListInternal storage self
-    ) private returns (bytes32 value) {
+    function _shift(DoublyLinkedListInternal storage self) private returns (bytes32 value) {
         value = _next(self, 0);
         _remove(self, value);
     }
 
-    function _unshift(
-        DoublyLinkedListInternal storage self,
-        bytes32 value
-    ) private returns (bool status) {
+    function _unshift(DoublyLinkedListInternal storage self, bytes32 value) private returns (bool status) {
         status = _insertBetween(self, 0, _next(self, 0), value);
     }
 
-    function _remove(
-        DoublyLinkedListInternal storage self,
-        bytes32 value
-    ) private returns (bool status) {
+    function _remove(DoublyLinkedListInternal storage self, bytes32 value) private returns (bool status) {
         if (_contains(self, value)) {
             _link(self, _prev(self, value), _next(self, value));
             delete self._prevValues[value];
@@ -409,15 +257,9 @@ library DoublyLinkedList {
         bytes32 oldValue,
         bytes32 newValue
     ) private returns (bool status) {
-        if (!_contains(self, oldValue))
-            revert DoublyLinkedList__NonExistentEntry();
+        if (!_contains(self, oldValue)) revert("DoublyLinkedList: Non Existent Entry");
 
-        status = _insertBetween(
-            self,
-            _prev(self, oldValue),
-            _next(self, oldValue),
-            newValue
-        );
+        status = _insertBetween(self, _prev(self, oldValue), _next(self, oldValue), newValue);
 
         if (status) {
             delete self._prevValues[oldValue];
@@ -425,11 +267,7 @@ library DoublyLinkedList {
         }
     }
 
-    function _link(
-        DoublyLinkedListInternal storage self,
-        bytes32 prevValue,
-        bytes32 nextValue
-    ) private {
+    function _link(DoublyLinkedListInternal storage self, bytes32 prevValue, bytes32 nextValue) private {
         self._nextValues[prevValue] = nextValue;
         self._prevValues[nextValue] = prevValue;
     }

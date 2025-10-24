@@ -1,20 +1,17 @@
 // SPDX-License-Identifier: MIT
 // FeverTokens Contracts v1.0.0
 
-pragma solidity ^0.8.20;
+pragma solidity 0.8.26;
 
-import { IERC1155EnumerableInternal } from "./IERC1155EnumerableInternal.sol";
-import { ERC1155BaseInternal } from "../base/ERC1155BaseInternal.sol";
-import { ERC1155EnumerableStorage } from "./ERC1155EnumerableStorage.sol";
-import { EnumerableSet } from "../../../data/EnumerableSet.sol";
+import {IERC1155EnumerableInternal} from "./IERC1155EnumerableInternal.sol";
+import {ERC1155BaseInternal} from "../base/ERC1155BaseInternal.sol";
+import {ERC1155EnumerableStorage} from "./ERC1155EnumerableStorage.sol";
+import {EnumerableSet} from "../../../data/EnumerableSet.sol";
 
 /**
  * @title ERC1155Enumerable internal functions
  */
-abstract contract ERC1155EnumerableInternal is
-    IERC1155EnumerableInternal,
-    ERC1155BaseInternal
-{
+abstract contract ERC1155EnumerableInternal is IERC1155EnumerableInternal, ERC1155BaseInternal {
     using EnumerableSet for EnumerableSet.AddressSet;
     using EnumerableSet for EnumerableSet.UintSet;
 
@@ -41,12 +38,8 @@ abstract contract ERC1155EnumerableInternal is
      * @param id token id to query
      * @return list of holder addresses
      */
-    function _accountsByToken(
-        uint256 id
-    ) internal view virtual returns (address[] memory) {
-        EnumerableSet.AddressSet storage accounts = ERC1155EnumerableStorage
-            .layout()
-            .accountsByToken[id];
+    function _accountsByToken(uint256 id) internal view virtual returns (address[] memory) {
+        EnumerableSet.AddressSet storage accounts = ERC1155EnumerableStorage.layout().accountsByToken[id];
 
         address[] memory addresses = new address[](accounts.length());
 
@@ -64,12 +57,8 @@ abstract contract ERC1155EnumerableInternal is
      * @param account address to query
      * @return list of token ids
      */
-    function _tokensByAccount(
-        address account
-    ) internal view virtual returns (uint256[] memory) {
-        EnumerableSet.UintSet storage tokens = ERC1155EnumerableStorage
-            .layout()
-            .tokensByAccount[account];
+    function _tokensByAccount(address account) internal view virtual returns (uint256[] memory) {
+        EnumerableSet.UintSet storage tokens = ERC1155EnumerableStorage.layout().tokensByAccount[account];
 
         uint256[] memory ids = new uint256[](tokens.length());
 
@@ -97,10 +86,8 @@ abstract contract ERC1155EnumerableInternal is
         super._beforeTokenTransfer(operator, from, to, ids, amounts, data);
 
         if (from != to) {
-            ERC1155EnumerableStorage.Layout storage l = ERC1155EnumerableStorage
-                .layout();
-            mapping(uint256 => EnumerableSet.AddressSet)
-                storage tokenAccounts = l.accountsByToken;
+            ERC1155EnumerableStorage.Layout storage l = ERC1155EnumerableStorage.layout();
+            mapping(uint256 => EnumerableSet.AddressSet) storage tokenAccounts = l.accountsByToken;
             EnumerableSet.UintSet storage fromTokens = l.tokensByAccount[from];
             EnumerableSet.UintSet storage toTokens = l.tokensByAccount[to];
 

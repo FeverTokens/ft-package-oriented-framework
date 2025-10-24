@@ -1,20 +1,17 @@
 // SPDX-License-Identifier: MIT
 // FeverTokens Contracts v1.0.0
 
-pragma solidity ^0.8.20;
+pragma solidity 0.8.26;
 
-import { IERC20Snapshot } from "./IERC20Snapshot.sol";
-import { ERC20SnapshotInternal } from "./ERC20SnapshotInternal.sol";
+import {IERC20Snapshot} from "./IERC20Snapshot.sol";
+import {ERC20SnapshotInternal} from "./ERC20SnapshotInternal.sol";
 
 /**
  * @title ERC20 base implementation with support for token balance and supply snapshots
  */
 abstract contract ERC20Snapshot is IERC20Snapshot, ERC20SnapshotInternal {
     /// @inheritdoc IERC20Snapshot
-    function balanceOfAt(
-        address account,
-        uint256 snapshotId
-    ) public view returns (uint256) {
+    function balanceOfAt(address account, uint256 snapshotId) public view returns (uint256) {
         return _balanceOfAt(account, snapshotId);
     }
 

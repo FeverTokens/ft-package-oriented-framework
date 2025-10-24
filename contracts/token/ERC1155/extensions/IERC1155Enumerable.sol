@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 // FeverTokens Contracts v1.0.0
 
-pragma solidity ^0.8.20;
+pragma solidity 0.8.26;
 
-import { IERC1155EnumerableInternal } from "./IERC1155EnumerableInternal.sol";
+import {IERC1155EnumerableInternal} from "./IERC1155EnumerableInternal.sol";
 
 /**
  * @title ERC1155 enumerable and aggregate function interface
@@ -28,16 +28,12 @@ interface IERC1155Enumerable is IERC1155EnumerableInternal {
      * @param id token id to query
      * @return list of holder addresses
      */
-    function accountsByToken(
-        uint256 id
-    ) external view returns (address[] memory);
+    function accountsByToken(uint256 id) external view returns (address[] memory);
 
     /**
      * @notice query tokens held by given address
      * @param account address to query
      * @return list of token ids
      */
-    function tokensByAccount(
-        address account
-    ) external view returns (uint256[] memory);
+    function tokensByAccount(address account) external view returns (uint256[] memory);
 }

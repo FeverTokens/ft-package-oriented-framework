@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 // FeverTokens Contracts v1.0.0
 
-pragma solidity ^0.8.20;
+pragma solidity 0.8.26;
 
 /**
  * @title utility functions for uint256 operations
@@ -60,10 +60,7 @@ library UintUtils {
         return toHexString(value, length);
     }
 
-    function toHexString(
-        uint256 value,
-        uint256 length
-    ) internal pure returns (string memory) {
+    function toHexString(uint256 value, uint256 length) internal pure returns (string memory) {
         bytes memory buffer = new bytes(2 * length + 2);
         buffer[0] = "0";
         buffer[1] = "x";
@@ -75,7 +72,7 @@ library UintUtils {
             }
         }
 
-        if (value != 0) revert UintUtils__InsufficientHexLength();
+        if (value != 0) revert("UintUtils: Insufficient Hex Length");
 
         return string(buffer);
     }

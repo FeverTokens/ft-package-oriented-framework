@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 // FeverTokens Contracts v1.0.0
 
-pragma solidity ^0.8.20;
+pragma solidity 0.8.26;
 
-import { IERC721 } from "../IERC721.sol";
-import { IERC721Base } from "./IERC721Base.sol";
-import { ERC721BaseInternal } from "./ERC721BaseInternal.sol";
+import {IERC721} from "../IERC721.sol";
+import {IERC721Base} from "./IERC721Base.sol";
+import {ERC721BaseInternal} from "./ERC721BaseInternal.sol";
 
 /**
  * @title Base ERC721 implementation, excluding optional extensions
@@ -36,44 +36,28 @@ abstract contract ERC721Base is IERC721Base, ERC721BaseInternal {
     /**
      * @inheritdoc IERC721
      */
-    function isApprovedForAll(
-        address account,
-        address operator
-    ) external view returns (bool) {
+    function isApprovedForAll(address account, address operator) external view returns (bool) {
         return _isApprovedForAll(account, operator);
     }
 
     /**
      * @inheritdoc IERC721
      */
-    function transferFrom(
-        address from,
-        address to,
-        uint256 tokenId
-    ) external payable {
+    function transferFrom(address from, address to, uint256 tokenId) external payable {
         _transferFrom(from, to, tokenId);
     }
 
     /**
      * @inheritdoc IERC721
      */
-    function safeTransferFrom(
-        address from,
-        address to,
-        uint256 tokenId
-    ) external payable {
+    function safeTransferFrom(address from, address to, uint256 tokenId) external payable {
         _safeTransferFrom(from, to, tokenId);
     }
 
     /**
      * @inheritdoc IERC721
      */
-    function safeTransferFrom(
-        address from,
-        address to,
-        uint256 tokenId,
-        bytes memory data
-    ) external payable {
+    function safeTransferFrom(address from, address to, uint256 tokenId, bytes memory data) external payable {
         _safeTransferFrom(from, to, tokenId, data);
     }
 

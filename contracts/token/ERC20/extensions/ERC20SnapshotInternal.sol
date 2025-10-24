@@ -1,21 +1,18 @@
 // SPDX-License-Identifier: MIT
 // FeverTokens Contracts v1.0.0
 
-pragma solidity ^0.8.20;
+pragma solidity 0.8.26;
 
-import { IERC20SnapshotInternal } from "./IERC20SnapshotInternal.sol";
-import { ERC20Base, ERC20BaseInternal } from "../base/ERC20Base.sol";
-import { ERC20SnapshotStorage } from "./ERC20SnapshotStorage.sol";
-import { Math } from "../../../utils/Math.sol";
+import {IERC20SnapshotInternal} from "./IERC20SnapshotInternal.sol";
+import {ERC20Base, ERC20BaseInternal} from "../base/ERC20Base.sol";
+import {ERC20SnapshotStorage} from "./ERC20SnapshotStorage.sol";
+import {Math} from "../../../utils/Math.sol";
 
 /**
  * @title ERC20Snapshot internal functions
  */
 abstract contract ERC20SnapshotInternal is IERC20SnapshotInternal, ERC20Base {
-    function _balanceOfAt(
-        address account,
-        uint256 snapshotId
-    ) internal view returns (uint256) {
+    function _balanceOfAt(address account, uint256 snapshotId) internal view returns (uint256) {
         (bool snapshotted, uint256 value) = _valueAt(
             snapshotId,
             ERC20SnapshotStorage.layout().accountBalanceSnapshots[account]
@@ -27,11 +24,10 @@ abstract contract ERC20SnapshotInternal is IERC20SnapshotInternal, ERC20Base {
         uint256 snapshotId,
         ERC20SnapshotStorage.Snapshots storage snapshots
     ) private view returns (bool, uint256) {
-        if (snapshotId == 0) revert ERC20Snapshot__SnapshotIdIsZero();
+        if (snapshotId == 0) revert("ERC20Snapshot: SnapshotId Is Zero");
         ERC20SnapshotStorage.Layout storage l = ERC20SnapshotStorage.layout();
 
-        if (snapshotId > l.snapshotId)
-            revert ERC20Snapshot__SnapshotIdDoesNotExists();
+        if (snapshotId > l.snapshotId) revert("ERC20Snapshot: SnapshotId Does Not Exists");
 
         uint256 index = _findUpperBound(snapshots.ids, snapshotId);
 
@@ -50,10 +46,7 @@ abstract contract ERC20SnapshotInternal is IERC20SnapshotInternal, ERC20Base {
      * @param query element to search for
      * @return index of query or array length if query is not found or exceeded
      */
-    function _findUpperBound(
-        uint256[] storage array,
-        uint256 query
-    ) private view returns (uint256) {
+    function _findUpperBound(uint256[] storage array, uint256 query) private view returns (uint256) {
         unchecked {
             if (array.length == 0) {
                 return 0;
@@ -76,13 +69,8 @@ abstract contract ERC20SnapshotInternal is IERC20SnapshotInternal, ERC20Base {
         }
     }
 
-    function _totalSupplyAt(
-        uint256 snapshotId
-    ) internal view returns (uint256) {
-        (bool snapshotted, uint256 value) = _valueAt(
-            snapshotId,
-            ERC20SnapshotStorage.layout().totalSupplySnapshots
-        );
+    function _totalSupplyAt(uint256 snapshotId) internal view returns (uint256) {
+        (bool snapshotted, uint256 value) = _valueAt(snapshotId, ERC20SnapshotStorage.layout().totalSupplySnapshots);
         return snapshotted ? value : _totalSupply();
     }
 
@@ -97,23 +85,14 @@ abstract contract ERC20SnapshotInternal is IERC20SnapshotInternal, ERC20Base {
     }
 
     function _updateAccountSnapshot(address account) private {
-        _updateSnapshot(
-            ERC20SnapshotStorage.layout().accountBalanceSnapshots[account],
-            _balanceOf(account)
-        );
+        _updateSnapshot(ERC20SnapshotStorage.layout().accountBalanceSnapshots[account], _balanceOf(account));
     }
 
     function _updateTotalSupplySnapshot() private {
-        _updateSnapshot(
-            ERC20SnapshotStorage.layout().totalSupplySnapshots,
-            _totalSupply()
-        );
+        _updateSnapshot(ERC20SnapshotStorage.layout().totalSupplySnapshots, _totalSupply());
     }
 
-    function _updateSnapshot(
-        ERC20SnapshotStorage.Snapshots storage snapshots,
-        uint256 value
-    ) private {
+    function _updateSnapshot(ERC20SnapshotStorage.Snapshots storage snapshots, uint256 value) private {
         uint256 current = ERC20SnapshotStorage.layout().snapshotId;
 
         if (_lastSnapshotId(snapshots.ids) < current) {
@@ -122,9 +101,7 @@ abstract contract ERC20SnapshotInternal is IERC20SnapshotInternal, ERC20Base {
         }
     }
 
-    function _lastSnapshotId(
-        uint256[] storage ids
-    ) private view returns (uint256) {
+    function _lastSnapshotId(uint256[] storage ids) private view returns (uint256) {
         return ids.length == 0 ? 0 : ids[ids.length - 1];
     }
 
@@ -132,11 +109,7 @@ abstract contract ERC20SnapshotInternal is IERC20SnapshotInternal, ERC20Base {
      * @notice ERC20 hook: update snapshot data
      * @inheritdoc ERC20BaseInternal
      */
-    function _beforeTokenTransfer(
-        address from,
-        address to,
-        uint256 amount
-    ) internal virtual override {
+    function _beforeTokenTransfer(address from, address to, uint256 amount) internal virtual override {
         super._beforeTokenTransfer(from, to, amount);
 
         if (from == address(0)) {

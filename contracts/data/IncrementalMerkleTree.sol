@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 // FeverTokens Contracts v1.0.0
 
-pragma solidity ^0.8.20;
+pragma solidity 0.8.26;
 
 library IncrementalMerkleTree {
     using IncrementalMerkleTree for Tree;
@@ -46,10 +46,7 @@ library IncrementalMerkleTree {
         }
     }
 
-    function at(
-        Tree storage t,
-        uint256 index
-    ) internal view returns (bytes32 hash) {
+    function at(Tree storage t, uint256 index) internal view returns (bytes32 hash) {
         hash = t.nodes[0][index];
     }
 
@@ -154,9 +151,7 @@ library IncrementalMerkleTree {
                 // sibling is on the left
                 assembly {
                     mstore(0x00, row.slot)
-                    let sibling := sload(
-                        add(keccak256(0x00, 0x20), sub(colIndex, 1))
-                    )
+                    let sibling := sload(add(keccak256(0x00, 0x20), sub(colIndex, 1)))
                     mstore(0x00, sibling)
                     mstore(0x20, hash)
                     hash := keccak256(0x00, 0x40)
@@ -165,9 +160,7 @@ library IncrementalMerkleTree {
                 // sibling is on the right (and sibling exists)
                 assembly {
                     mstore(0x00, row.slot)
-                    let sibling := sload(
-                        add(keccak256(0x00, 0x20), add(colIndex, 1))
-                    )
+                    let sibling := sload(add(keccak256(0x00, 0x20), add(colIndex, 1)))
                     mstore(0x00, hash)
                     mstore(0x20, sibling)
                     hash := keccak256(0x00, 0x40)

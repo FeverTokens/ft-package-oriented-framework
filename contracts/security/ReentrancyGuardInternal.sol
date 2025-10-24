@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 // FeverTokens Contracts v1.0.0
 
-pragma solidity ^0.8.20;
+pragma solidity 0.8.26;
 
-import { IReentrancyGuardInternal } from "./IReentrancyGuardInternal.sol";
-import { ReentrancyGuardStorage } from "./ReentrancyGuardStorage.sol";
-import { InitializableInternal } from "../initializable/InitializableInternal.sol";
+import {IReentrancyGuardInternal} from "./IReentrancyGuardInternal.sol";
+import {ReentrancyGuardStorage} from "./ReentrancyGuardStorage.sol";
+import {InitializableInternal} from "../initializable/InitializableInternal.sol";
 
 /**
  * @title Internal functions for ReeantrancyGuard security control module.
@@ -28,11 +28,11 @@ abstract contract ReentrancyGuardInternal is
     uint256 private constant _ENTERED = 2;
     uint256 private constant _NOT_ENTERED = 1;
 
-    function __ReentrancyGuard_init() internal onlyInitializing {
+    function __ReentrancyGuard_init() internal {
         __ReentrancyGuard_init_unchained();
     }
 
-    function __ReentrancyGuard_init_unchained() internal onlyInitializing {
+    function __ReentrancyGuard_init_unchained() internal {
         ReentrancyGuardStorage.Layout storage l = ReentrancyGuardStorage
             .layout();
         l.status = _NOT_ENTERED;
@@ -41,7 +41,7 @@ abstract contract ReentrancyGuardInternal is
     modifier nonReentrant() virtual {
         // On the first call to nonReentrant, status will be 0
         if (_isReentrancyGuardLocked()) {
-            revert ReentrancyGuard__ReentrantCall();
+            revert("ReentrancyGuard: Reentrant Call");
         }
 
         // Any calls to nonReentrant after this point will fail

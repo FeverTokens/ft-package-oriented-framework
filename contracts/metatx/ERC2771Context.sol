@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 // FeverTokens Contracts v1.0.0
 
-pragma solidity ^0.8.20;
+pragma solidity 0.8.26;
 
-import { IERC2771Context } from "./IERC2771Context.sol";
-import { ERC2771ContextInternal } from "./ERC2771ContextInternal.sol";
+import {IERC2771Context} from "./IERC2771Context.sol";
+import {ERC2771ContextInternal} from "./ERC2771ContextInternal.sol";
 
 contract ERC2771Context is IERC2771Context, ERC2771ContextInternal {
     // constructor(address trustedForwarder_) {
@@ -21,9 +21,7 @@ contract ERC2771Context is IERC2771Context, ERC2771ContextInternal {
     /**
      * @inheritdoc IERC2771Context
      */
-    function isTrustedForwarder(
-        address forwarder
-    ) public view virtual returns (bool) {
+    function isTrustedForwarder(address forwarder) public view virtual returns (bool) {
         return _isTrustedForwarder(forwarder);
     }
 }
