@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 // FeverTokens Contracts v1.0.0
 
-pragma solidity ^0.8.20;
+pragma solidity 0.8.26;
 
-import { IERC2771ContextInternal } from "./IERC2771ContextInternal.sol";
+import {IERC2771ContextInternal} from "./IERC2771ContextInternal.sol";
 
 interface IERC2771Context is IERC2771ContextInternal {
     /**

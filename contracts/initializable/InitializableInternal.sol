@@ -1,100 +1,60 @@
 // SPDX-License-Identifier: MIT
 // FeverTokens Contracts v1.0.0
 
-pragma solidity ^0.8.20;
+pragma solidity 0.8.26;
 
-import { IInitializableInternal } from "./IInitializableInternal.sol";
-import { InitializableStorage } from "./InitializableStorage.sol";
+import "./IInitializableInternal.sol";
+import "./InitializableStorage.sol";
 
+/**
+ * @title Initializable Internal Abstract Contract
+ * @notice Provides internal functions and modifiers for initializable management in a Diamond proxy.
+ * @dev This abstract contract implements functions and modifiers to manage the initialization process.
+ *      inspired from https://github.com/dl-solarity/solidity-lib (MIT license)
+ */
 abstract contract InitializableInternal is IInitializableInternal {
     /**
-     * @dev A modifier that defines a protected initializer function that can be invoked at most once. In its scope,
-     * `onlyInitializing` functions can be used to initialize parent contracts.
+     * @dev A modifier that defines a protected initializer function that can be invoked at most
+     * once for a particular storage in a Diamond proxy that begins with {storageSlot_}.
+     * @param storageSlot_ The storage slot to check.
      *
-     * Similar to `reinitializer(1)`, except that in the context of a constructor an `initializer` may be invoked any
-     * number of times. This behavior in the constructor can be useful during testing and is not expected to be used in
-     * production.
-     *
-     * Emits an {Initialized} event.
-     */
-    modifier initializer() {
-        // solhint-disable-next-line var-name-mixedcase
-        InitializableStorage.Layout storage l = InitializableStorage.layout();
-
-        // Cache values to avoid duplicated sloads
-        bool isTopLevelCall = !l._initializing;
-        uint64 initialized = l._initialized;
-
-        // Allowed calls:
-        // - initialSetup: the contract is not in the initializing state and no previous version was
-        //                 initialized
-        // - construction: the contract is initialized at version 1 (no reininitialization) and the
-        //                 current contract is just being deployed
-        bool initialSetup = initialized == 0 && isTopLevelCall;
-        bool construction = initialized == 1 && address(this).code.length == 0;
-
-        if (!initialSetup && !construction) {
-            revert("Initializable: Invalid Initialization");
-        }
-
-        l._initialized = 1;
-        if (isTopLevelCall) {
-            l._initializing = true;
-        }
-        _;
-        if (isTopLevelCall) {
-            l._initializing = false;
-            emit Initialized(1);
-        }
-    }
-
-    /**
-     * @dev A modifier that defines a protected reinitializer function that can be invoked at most once, and only if the
-     * contract hasn't been initialized to a greater version before. In its scope, `onlyInitializing` functions can be
-     * used to initialize parent contracts.
-     *
-     * A reinitializer may be used after the original initialization step. This is essential to configure modules that
-     * are added through upgrades and that require initialization.
-     *
-     * When `version` is 1, this modifier is similar to `initializer`, except that functions marked with `reinitializer`
-     * cannot be nested. If one is invoked in the context of another, execution will revert.
-     *
-     * Note that versions can jump in increments greater than 1; this implies that if multiple reinitializers coexist in
-     * a contract, executing them in the right order is up to the developer or operator.
-     *
-     * WARNING: Setting the version to 2**64 - 1 will prevent any future reinitialization.
+     * In its scope, `onlyInitializing` functions can be used to initialize parent contracts.
      *
      * Emits an {Initialized} event.
      */
-    modifier reinitializer(uint64 version) {
-        // solhint-disable-next-line var-name-mixedcase
-        InitializableStorage.Layout storage l = InitializableStorage.layout();
+    modifier initializer(bytes32 storageSlot_) {
+        InitializableStorage.Layout storage $ = InitializableStorage.layout();
 
-        if (l._initializing || l._initialized >= version) {
-            revert("Initializable: Invalid Initialization");
+        if ($.initialization[storageSlot_] != InitializationStatus.UnInitialized) {
+            revert InitializableInvalidInitialization();
         }
-        l._initialized = version;
-        l._initializing = true;
+
+        $.initialization[storageSlot_] = InitializationStatus.Initializing;
+
         _;
-        l._initializing = false;
-        emit Initialized(version);
+
+        $.initialization[storageSlot_] = InitializationStatus.Initialized;
+
+        emit Initialized(storageSlot_);
     }
 
     /**
      * @dev Modifier to protect an initialization function so that it can only be invoked by functions with the
-     * {initializer} and {reinitializer} modifiers, directly or indirectly.
+     * {initializer} modifier, directly or indirectly.
+     * @param storageSlot_ The storage slot to check.
      */
-    modifier onlyInitializing() {
-        _checkInitializing();
+    modifier onlyInitializing(bytes32 storageSlot_) {
+        _checkInitializing(storageSlot_);
         _;
     }
 
     /**
      * @dev Reverts if the contract is not in an initializing state. See {onlyInitializing}.
+     * @param storageSlot_ The storage slot to check.
      */
-    function _checkInitializing() internal view virtual {
-        if (!_isInitializing()) {
-            revert("Initializable: Not Initializing");
+    function _checkInitializing(bytes32 storageSlot_) internal view {
+        if (!_isInitializing(storageSlot_)) {
+            revert InitializableNotInitializing();
         }
     }
 
@@ -106,34 +66,34 @@ abstract contract InitializableInternal is IInitializableInternal {
      *
      * Emits an {Initialized} event the first time it is successfully executed.
      */
-    function _disableInitializers() internal virtual {
-        // solhint-disable-next-line var-name-mixedcase
-        InitializableStorage.Layout storage l = InitializableStorage.layout();
+    function _disableInitializers(bytes32 storageSlot_) internal {
+        InitializableStorage.Layout storage $ = InitializableStorage.layout();
 
-        if (l._initializing) {
-            revert("Initializable: Invalid Initialization");
+        if ($.initialization[storageSlot_] != InitializationStatus.UnInitialized) {
+            revert InitializableInvalidInitialization();
         }
-        if (l._initialized != type(uint64).max) {
-            l._initialized = type(uint64).max;
-            emit Initialized(type(uint64).max);
-        }
+
+        $.initialization[storageSlot_] = InitializationStatus.Initialized;
+
+        emit Initialized(storageSlot_);
     }
 
     /**
-     * @dev Returns the highest version that has been initialized. See {reinitializer}.
+     * @dev Internal function that returns the initialization status for the specified storage slot.
+     * @param storageSlot_ The storage slot to check.
      */
-    function _getInitializedVersion() internal view returns (uint64) {
-        InitializableStorage.Layout storage l = InitializableStorage.layout();
+    function _getInitializing(bytes32 storageSlot_) internal view returns (InitializationStatus) {
+        InitializableStorage.Layout storage $ = InitializableStorage.layout();
 
-        return l._initialized;
+        return $.initialization[storageSlot_];
     }
 
     /**
      * @dev Returns `true` if the contract is currently initializing. See {onlyInitializing}.
      */
-    function _isInitializing() internal view returns (bool) {
-        InitializableStorage.Layout storage l = InitializableStorage.layout();
+    function _isInitializing(bytes32 storageSlot_) internal view returns (bool) {
+        InitializableStorage.Layout storage $ = InitializableStorage.layout();
 
-        return l._initializing;
+        return $.initialization[storageSlot_] == InitializationStatus.Initializing;
     }
 }

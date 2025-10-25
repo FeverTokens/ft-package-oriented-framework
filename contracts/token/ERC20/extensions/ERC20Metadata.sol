@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 // FeverTokens Contracts v1.0.0
 
-pragma solidity ^0.8.20;
+pragma solidity 0.8.26;
 
-import { IERC20Metadata } from "./IERC20Metadata.sol";
-import { ERC20MetadataInternal } from "./ERC20MetadataInternal.sol";
+import {IERC20Metadata} from "./IERC20Metadata.sol";
+import {ERC20MetadataInternal} from "./ERC20MetadataInternal.sol";
 
 /**
  * @title ERC20 metadata extensions

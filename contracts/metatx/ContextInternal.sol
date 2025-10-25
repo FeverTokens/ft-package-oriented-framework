@@ -1,15 +1,14 @@
 // SPDX-License-Identifier: MIT
 // FeverTokens Contracts v1.0.0
 
-pragma solidity ^0.8.20;
+pragma solidity 0.8.26;
 
-import { IContextInternal } from "./IContextInternal.sol";
-import { Initializable } from "../initializable/Initializable.sol";
+import {IContextInternal} from "./IContextInternal.sol";
 
-abstract contract ContextInternal is IContextInternal, Initializable {
-    function __Context_init() internal onlyInitializing {}
+abstract contract ContextInternal is IContextInternal {
+    function __Context_init() internal {}
 
-    function __Context_init_unchained() internal onlyInitializing {}
+    function __Context_init_unchained() internal {}
 
     function _msgSender() internal view virtual returns (address) {
         return msg.sender;

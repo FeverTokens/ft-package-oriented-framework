@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 // FeverTokens Contracts v1.0.0
 
-pragma solidity ^0.8.20;
+pragma solidity 0.8.26;
 
-import { IERC173Internal } from "./IERC173Internal.sol";
+import {IERC173Internal} from "./IERC173Internal.sol";
 
 /**  @title ERC-173 Contract Ownership Standard
  * Note: the ERC-165 identifier for this interface is 0x7f5828d0

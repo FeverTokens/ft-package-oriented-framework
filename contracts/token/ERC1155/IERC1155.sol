@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 // FeverTokens Contracts v1.0.0
 
-pragma solidity ^0.8.20;
+pragma solidity 0.8.26;
 
-import { IERC1155Internal } from "./IERC1155Internal.sol";
+import {IERC1155Internal} from "./IERC1155Internal.sol";
 
 /**
  * @title ERC1155 interface
@@ -16,10 +16,7 @@ interface IERC1155 is IERC1155Internal {
      * @param id token to query
      * @return token balance
      */
-    function balanceOf(
-        address account,
-        uint256 id
-    ) external view returns (uint256);
+    function balanceOf(address account, uint256 id) external view returns (uint256);
 
     /**
      * @notice query the balances of given tokens held by given addresses
@@ -38,10 +35,7 @@ interface IERC1155 is IERC1155Internal {
      * @param operator address to query for approval received
      * @return whether operator is approved to spend tokens held by account
      */
-    function isApprovedForAll(
-        address account,
-        address operator
-    ) external view returns (bool);
+    function isApprovedForAll(address account, address operator) external view returns (bool);
 
     /**
      * @notice grant approval to or revoke approval from given operator to spend held tokens
@@ -58,13 +52,7 @@ interface IERC1155 is IERC1155Internal {
      * @param amount quantity of tokens to transfer
      * @param data data payload
      */
-    function safeTransferFrom(
-        address from,
-        address to,
-        uint256 id,
-        uint256 amount,
-        bytes calldata data
-    ) external;
+    function safeTransferFrom(address from, address to, uint256 id, uint256 amount, bytes calldata data) external;
 
     /**
      * @notice transfer batch of tokens between given addresses, checking for ERC1155Receiver implementation if applicable

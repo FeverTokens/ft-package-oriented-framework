@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 // FeverTokens Contracts v1.0.0
 
-pragma solidity ^0.8.20;
+pragma solidity 0.8.26;
 
-import { IERC20Internal } from "./IERC20Internal.sol";
+import {IERC20Internal} from "./IERC20Internal.sol";
 
 /**
  * @title ERC20 interface
@@ -29,10 +29,7 @@ interface IERC20 is IERC20Internal {
      * @param spender recipient of allowance
      * @return token allowance
      */
-    function allowance(
-        address holder,
-        address spender
-    ) external view returns (uint256);
+    function allowance(address holder, address spender) external view returns (uint256);
 
     /**
      * @notice grant approval to spender to spend tokens
@@ -49,10 +46,7 @@ interface IERC20 is IERC20Internal {
      * @param amount quantity of tokens to transfer
      * @return success status (always true; otherwise function should revert)
      */
-    function transfer(
-        address recipient,
-        uint256 amount
-    ) external returns (bool);
+    function transfer(address recipient, uint256 amount) external returns (bool);
 
     /**
      * @notice transfer tokens to given recipient on behalf of given holder
@@ -61,9 +55,5 @@ interface IERC20 is IERC20Internal {
      * @param amount quantity of tokens to transfer
      * @return success status (always true; otherwise function should revert)
      */
-    function transferFrom(
-        address holder,
-        address recipient,
-        uint256 amount
-    ) external returns (bool);
+    function transferFrom(address holder, address recipient, uint256 amount) external returns (bool);
 }

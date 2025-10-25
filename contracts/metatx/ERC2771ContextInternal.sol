@@ -1,26 +1,21 @@
 // SPDX-License-Identifier: MIT
 // FeverTokens Contracts v1.0.0
 
-pragma solidity ^0.8.20;
+pragma solidity 0.8.26;
 
-import { IERC2771ContextInternal } from "./IERC2771ContextInternal.sol";
-import { ContextInternal } from "./ContextInternal.sol";
+import {IERC2771ContextInternal} from "./IERC2771ContextInternal.sol";
+import {ContextInternal} from "./ContextInternal.sol";
 
-abstract contract ERC2771ContextInternal is
-    IERC2771ContextInternal,
-    ContextInternal
-{
+abstract contract ERC2771ContextInternal is IERC2771ContextInternal, ContextInternal {
     address internal _trustedForwarder;
 
-    function __ERC2771Context_init() internal onlyInitializing {
+    function __ERC2771Context_init() internal {
         __ERC2771Context_init_unchained();
     }
 
-    function __ERC2771Context_init_unchained() internal onlyInitializing {}
+    function __ERC2771Context_init_unchained() internal {}
 
-    function _isTrustedForwarder(
-        address forwarder
-    ) internal view virtual returns (bool) {
+    function _isTrustedForwarder(address forwarder) internal view virtual returns (bool) {
         return forwarder == _trustedForwarder;
     }
 
@@ -29,13 +24,7 @@ abstract contract ERC2771ContextInternal is
      * a call is not performed by the trusted forwarder or the calldata length is less than
      * 20 bytes (an address length).
      */
-    function _msgSender()
-        internal
-        view
-        virtual
-        override
-        returns (address sender)
-    {
+    function _msgSender() internal view virtual override returns (address sender) {
         if (_isTrustedForwarder(msg.sender) && msg.data.length >= 20) {
             // The assembly code is more direct than the Solidity version using `abi.decode`.
             /// @solidity memory-safe-assembly
@@ -52,13 +41,7 @@ abstract contract ERC2771ContextInternal is
      * a call is not performed by the trusted forwarder or the calldata length is less than
      * 20 bytes (an address length).
      */
-    function _msgData()
-        internal
-        view
-        virtual
-        override
-        returns (bytes calldata)
-    {
+    function _msgData() internal view virtual override returns (bytes calldata) {
         if (_isTrustedForwarder(msg.sender) && msg.data.length >= 20) {
             return msg.data[:msg.data.length - 20];
         } else {

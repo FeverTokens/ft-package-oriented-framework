@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 // FeverTokens Contracts v1.0.0
 
-pragma solidity ^0.8.20;
+pragma solidity 0.8.26;
 
-import { IPausable } from "./IPausable.sol";
-import { PausableInternal } from "./PausableInternal.sol";
+import {IPausable} from "./IPausable.sol";
+import {PausableInternal} from "./PausableInternal.sol";
 
 /**
  * @title Pausable security control module.

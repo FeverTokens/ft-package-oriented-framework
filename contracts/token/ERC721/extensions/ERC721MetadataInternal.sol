@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT
 // FeverTokens Contracts v1.0.0
 
-pragma solidity ^0.8.20;
+pragma solidity 0.8.26;
 
-import { IERC721MetadataInternal } from "./IERC721MetadataInternal.sol";
-import { ERC721BaseInternal } from "../base/ERC721Base.sol";
-import { ERC721MetadataStorage } from "./ERC721MetadataStorage.sol";
-import { UintUtils } from "../../../utils/UintUtils.sol";
+import {IERC721MetadataInternal} from "./IERC721MetadataInternal.sol";
+import {ERC721BaseInternal} from "../base/ERC721Base.sol";
+import {ERC721MetadataStorage} from "./ERC721MetadataStorage.sol";
+import {UintUtils} from "../../../utils/UintUtils.sol";
 
 /**
  * @title ERC721Metadata internal functions
@@ -40,7 +40,7 @@ abstract contract ERC721MetadataInternal is
     function _tokenURI(
         uint256 tokenId
     ) internal view virtual returns (string memory) {
-        if (!_exists(tokenId)) revert ERC721Metadata__NonExistentToken();
+        if (!_exists(tokenId)) revert("ERC721Metadata: Non Existent Token");
 
         ERC721MetadataStorage.Layout storage l = ERC721MetadataStorage.layout();
 

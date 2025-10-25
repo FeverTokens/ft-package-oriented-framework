@@ -1,16 +1,13 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.8;
+pragma solidity 0.8.26;
 
-import { AddressUtils } from "../utils/AddressUtils.sol";
-import { IProxy } from "./IProxy.sol";
+import {IProxy} from "./IProxy.sol";
 
 /**
  * @title Base proxy contract
  */
 abstract contract Proxy is IProxy {
-    using AddressUtils for address;
-
     /**
      * @notice delegate all calls to implementation contract
      * @dev reverts if implementation address contains no code, for compatibility with metamorphic contracts
@@ -19,19 +16,11 @@ abstract contract Proxy is IProxy {
     fallback() external payable virtual {
         address implementation = _getImplementation();
 
-        if (!implementation.isContract())
-            revert Proxy__ImplementationIsNotContract();
+        if (implementation.code.length == 0) revert ProxyImplementationIsNotContract();
 
         assembly {
             calldatacopy(0, 0, calldatasize())
-            let result := delegatecall(
-                gas(),
-                implementation,
-                0,
-                calldatasize(),
-                0,
-                0
-            )
+            let result := delegatecall(gas(), implementation, 0, calldatasize(), 0, 0)
             returndatacopy(0, 0, returndatasize())
 
             switch result

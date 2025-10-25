@@ -1,23 +1,19 @@
 // SPDX-License-Identifier: MIT
 // FeverTokens Contracts v1.0.0
 
-pragma solidity ^0.8.20;
+pragma solidity 0.8.26;
 
-import { IAccessControlInternal } from "./IAccessControlInternal.sol";
-import { AccessControlStorage } from "./AccessControlStorage.sol";
-import { EnumerableSet } from "../../data/EnumerableSet.sol";
-import { AddressUtils } from "../../utils/AddressUtils.sol";
-import { UintUtils } from "../../utils/UintUtils.sol";
-import { ContextInternal } from "../../metatx/ContextInternal.sol";
+import {IAccessControlInternal} from "./IAccessControlInternal.sol";
+import {AccessControlStorage} from "./AccessControlStorage.sol";
+import {EnumerableSet} from "../../data/EnumerableSet.sol";
+import {AddressUtils} from "../../utils/AddressUtils.sol";
+import {UintUtils} from "../../utils/UintUtils.sol";
 
 /**
  * @title Role-based access control system
  * @dev derived from https://github.com/OpenZeppelin/openzeppelin-contracts (MIT license)
  */
-abstract contract AccessControlInternal is
-    IAccessControlInternal,
-    ContextInternal
-{
+abstract contract AccessControlInternal is IAccessControlInternal {
     using AddressUtils for address;
     using EnumerableSet for EnumerableSet.AddressSet;
     using UintUtils for uint256;
@@ -35,14 +31,8 @@ abstract contract AccessControlInternal is
      * @param account account to query
      * @return whether role is assigned to account
      */
-    function _hasRole(
-        bytes32 role,
-        address account
-    ) internal view virtual returns (bool) {
-        return
-            AccessControlStorage.layout().roles[role].roleMembers.contains(
-                account
-            );
+    function _hasRole(bytes32 role, address account) internal view virtual returns (bool) {
+        return AccessControlStorage.layout().roles[role].roleMembers.contains(account);
     }
 
     /**
@@ -50,7 +40,7 @@ abstract contract AccessControlInternal is
      * @param role role to query
      */
     function _checkRole(bytes32 role) internal view virtual {
-        _checkRole(role, _msgSender());
+        _checkRole(role, msg.sender);
     }
 
     /**
@@ -78,9 +68,7 @@ abstract contract AccessControlInternal is
      * @param role role to query
      * @return admin role
      */
-    function _getRoleAdmin(
-        bytes32 role
-    ) internal view virtual returns (bytes32) {
+    function _getRoleAdmin(bytes32 role) internal view virtual returns (bytes32) {
         return AccessControlStorage.layout().roles[role].adminRole;
     }
 
@@ -102,7 +90,7 @@ abstract contract AccessControlInternal is
      */
     function _grantRole(bytes32 role, address account) internal virtual {
         AccessControlStorage.layout().roles[role].roleMembers.add(account);
-        emit RoleGranted(role, account, _msgSender());
+        emit RoleGranted(role, account, msg.sender);
     }
 
     /*
@@ -112,7 +100,7 @@ abstract contract AccessControlInternal is
      */
     function _revokeRole(bytes32 role, address account) internal virtual {
         AccessControlStorage.layout().roles[role].roleMembers.remove(account);
-        emit RoleRevoked(role, account, _msgSender());
+        emit RoleRevoked(role, account, msg.sender);
     }
 
     /**
@@ -120,7 +108,7 @@ abstract contract AccessControlInternal is
      * @param role role to renounce
      */
     function _renounceRole(bytes32 role) internal virtual {
-        _revokeRole(role, _msgSender());
+        _revokeRole(role, msg.sender);
     }
 
     /**
@@ -137,10 +125,7 @@ abstract contract AccessControlInternal is
      * @param role role to query
      * @param index index to query
      */
-    function _getRoleMember(
-        bytes32 role,
-        uint256 index
-    ) internal view virtual returns (address) {
+    function _getRoleMember(bytes32 role, uint256 index) internal view virtual returns (address) {
         return AccessControlStorage.layout().roles[role].roleMembers.at(index);
     }
 
@@ -148,9 +133,7 @@ abstract contract AccessControlInternal is
      * @notice query role for member count
      * @param role role to query
      */
-    function _getRoleMemberCount(
-        bytes32 role
-    ) internal view virtual returns (uint256) {
+    function _getRoleMemberCount(bytes32 role) internal view virtual returns (uint256) {
         return AccessControlStorage.layout().roles[role].roleMembers.length();
     }
 }

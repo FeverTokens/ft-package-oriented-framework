@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 // FeverTokens Contracts v1.0.0
 
-pragma solidity ^0.8.20;
+pragma solidity 0.8.26;
 
-import { IAccessControlInternal } from "./IAccessControlInternal.sol";
+import {IAccessControlInternal} from "./IAccessControlInternal.sol";
 
 interface IAccessControl is IAccessControlInternal {
     /*
@@ -11,10 +11,7 @@ interface IAccessControl is IAccessControlInternal {
      * @param role role to query
      * @return whether role is assigned to account
      */
-    function hasRole(
-        bytes32 role,
-        address account
-    ) external view returns (bool);
+    function hasRole(bytes32 role, address account) external view returns (bool);
 
     /*
      * @notice query admin role for given role
@@ -55,10 +52,7 @@ interface IAccessControl is IAccessControlInternal {
      * https://forum.openzeppelin.com/t/iterating-over-elements-on-enumerableset-in-openzeppelin-contracts/2296[forum post]
      * for more information.
      */
-    function getRoleMember(
-        bytes32 role,
-        uint256 index
-    ) external view returns (address);
+    function getRoleMember(bytes32 role, uint256 index) external view returns (address);
 
     /**
      * @notice Returns the number of accounts that have `role`. Can be used

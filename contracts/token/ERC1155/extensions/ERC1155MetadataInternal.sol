@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 // FeverTokens Contracts v1.0.0
 
-pragma solidity ^0.8.20;
+pragma solidity 0.8.26;
 
-import { IERC1155MetadataInternal } from "./IERC1155MetadataInternal.sol";
-import { ERC1155MetadataStorage } from "./ERC1155MetadataStorage.sol";
-import { UintUtils } from "../../../utils/UintUtils.sol";
+import {IERC1155MetadataInternal} from "./IERC1155MetadataInternal.sol";
+import {ERC1155MetadataStorage} from "./ERC1155MetadataStorage.sol";
+import {UintUtils} from "../../../utils/UintUtils.sol";
 
 /**
  * @title ERC1155Metadata internal functions
@@ -33,8 +33,7 @@ abstract contract ERC1155MetadataInternal is IERC1155MetadataInternal {
     }
 
     function _uri(uint256 tokenId) public view virtual returns (string memory) {
-        ERC1155MetadataStorage.Layout storage l = ERC1155MetadataStorage
-            .layout();
+        ERC1155MetadataStorage.Layout storage l = ERC1155MetadataStorage.layout();
 
         string memory tokenIdURI = l.tokenURIs[tokenId];
         string memory baseURI = l.baseURI;

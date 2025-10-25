@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 // FeverTokens Contracts v1.0.0
 
-pragma solidity ^0.8.20;
+pragma solidity 0.8.26;
 
-import { UintUtils } from "./UintUtils.sol";
+import {UintUtils} from "./UintUtils.sol";
 
 library AddressUtils {
     using UintUtils for uint256;
@@ -25,38 +25,20 @@ library AddressUtils {
     }
 
     function sendValue(address payable account, uint256 amount) internal {
-        (bool success, ) = account.call{ value: amount }("");
-        if (!success) revert AddressUtils__SendValueFailed();
+        (bool success, ) = account.call{value: amount}("");
+        if (!success) revert("AddressUtils: Send Value Failed");
     }
 
-    function functionCall(
-        address target,
-        bytes memory data
-    ) internal returns (bytes memory) {
-        return
-            functionCall(target, data, "AddressUtils: failed low-level call");
+    function functionCall(address target, bytes memory data) internal returns (bytes memory) {
+        return functionCall(target, data, "AddressUtils: failed low-level call");
     }
 
-    function functionCall(
-        address target,
-        bytes memory data,
-        string memory error
-    ) internal returns (bytes memory) {
+    function functionCall(address target, bytes memory data, string memory error) internal returns (bytes memory) {
         return _functionCallWithValue(target, data, 0, error);
     }
 
-    function functionCallWithValue(
-        address target,
-        bytes memory data,
-        uint256 value
-    ) internal returns (bytes memory) {
-        return
-            functionCallWithValue(
-                target,
-                data,
-                value,
-                "AddressUtils: failed low-level call with value"
-            );
+    function functionCallWithValue(address target, bytes memory data, uint256 value) internal returns (bytes memory) {
+        return functionCallWithValue(target, data, value, "AddressUtils: failed low-level call with value");
     }
 
     function functionCallWithValue(
@@ -65,8 +47,7 @@ library AddressUtils {
         uint256 value,
         string memory error
     ) internal returns (bytes memory) {
-        if (value > address(this).balance)
-            revert AddressUtils__InsufficientBalance();
+        if (value > address(this).balance) revert("AddressUtils: Insufficient Balance");
         return _functionCallWithValue(target, data, value, error);
     }
 
@@ -92,15 +73,7 @@ library AddressUtils {
 
         assembly {
             // execute external call via assembly to avoid automatic copying of return data
-            success := call(
-                gasAmount,
-                target,
-                value,
-                add(data, 0x20),
-                mload(data),
-                0,
-                0
-            )
+            success := call(gasAmount, target, value, add(data, 0x20), mload(data), 0, 0)
 
             // determine whether to limit amount of data to copy
             let toCopy := returndatasize()
@@ -123,11 +96,9 @@ library AddressUtils {
         uint256 value,
         string memory error
     ) private returns (bytes memory) {
-        if (!isContract(target)) revert AddressUtils__NotContract();
+        if (!isContract(target)) revert("AddressUtils: Not Contract");
 
-        (bool success, bytes memory returnData) = target.call{ value: value }(
-            data
-        );
+        (bool success, bytes memory returnData) = target.call{value: value}(data);
 
         if (success) {
             return returnData;

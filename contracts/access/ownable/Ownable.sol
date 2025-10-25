@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: MIT
 // FeverTokens Contracts v1.0.0
 
-pragma solidity ^0.8.20;
+pragma solidity 0.8.26;
 
-import { IERC173 } from "./IERC173.sol";
-import { IOwnable } from "./IOwnable.sol";
-import { OwnableStorage } from "./OwnableStorage.sol";
-import { OwnableInternal } from "./OwnableInternal.sol";
+import {IERC173} from "./IERC173.sol";
+import {IOwnable} from "./IOwnable.sol";
+import {OwnableStorage} from "./OwnableStorage.sol";
+import {OwnableInternal} from "./OwnableInternal.sol";
 
 contract Ownable is IOwnable, OwnableInternal {
     /// @inheritdoc IERC173

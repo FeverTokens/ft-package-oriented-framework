@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
-// FeverTokens Contracts v1.0.0
 
-pragma solidity ^0.8.20;
+pragma solidity 0.8.26;
 
 /**
  * @dev derived from https://github.com/mudgen/diamond-2 (MIT license)
@@ -17,13 +16,14 @@ library DiamondBaseStorage {
         address fallbackAddress;
     }
 
+    // keccak256(abi.encode(uint256(keccak256("fevertokens.storage.DiamondBase")) - 1)) & ~bytes32(uint256(0xff))
     bytes32 internal constant STORAGE_SLOT =
-        keccak256("fevertokens.contracts.storage.DiamondBase");
+        0x2edf44bd63cb5d8b62c8e1fe5d7bb72e6b79f4df65709bb1b459372947e4b000;
 
-    function layout() internal pure returns (Layout storage l) {
+    function layout() internal pure returns (Layout storage $) {
         bytes32 slot = STORAGE_SLOT;
         assembly {
-            l.slot := slot
+            $.slot := slot
         }
     }
 }

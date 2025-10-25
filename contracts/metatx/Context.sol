@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 // FeverTokens Contracts v1.0.0
 
-pragma solidity ^0.8.20;
+pragma solidity 0.8.26;
 
-import { IContext } from "./IContext.sol";
-import { ContextInternal } from "./ContextInternal.sol";
+import {IContext} from "./IContext.sol";
+import {ContextInternal} from "./ContextInternal.sol";
 
 /**
  * @dev Provides information about the current execution context, including the
@@ -16,6 +16,4 @@ import { ContextInternal } from "./ContextInternal.sol";
  *
  * This contract is only required for intermediate, library-like contracts.
  */
-abstract contract Context is IContext, ContextInternal {
-
-}
+abstract contract Context is IContext, ContextInternal {}

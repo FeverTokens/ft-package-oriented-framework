@@ -1,37 +1,31 @@
 // SPDX-License-Identifier: MIT
 // FeverTokens Contracts v1.0.0
 
-pragma solidity ^0.8.20;
+pragma solidity 0.8.26;
 
-import { IERC721Receiver } from "../IERC721Receiver.sol";
-import { EnumerableMap } from "../../../data/EnumerableMap.sol";
-import { EnumerableSet } from "../../../data/EnumerableSet.sol";
-import { AddressUtils } from "../../../utils/AddressUtils.sol";
-import { IERC721BaseInternal } from "./IERC721BaseInternal.sol";
-import { ERC721BaseStorage } from "./ERC721BaseStorage.sol";
-import { ERC2771ContextInternal } from "../../../metatx/ERC2771ContextInternal.sol";
+import {IERC721Receiver} from "../IERC721Receiver.sol";
+import {EnumerableMap} from "../../../data/EnumerableMap.sol";
+import {EnumerableSet} from "../../../data/EnumerableSet.sol";
+import {AddressUtils} from "../../../utils/AddressUtils.sol";
+import {IERC721BaseInternal} from "./IERC721BaseInternal.sol";
+import {ERC721BaseStorage} from "./ERC721BaseStorage.sol";
 
 /**
  * @title Base ERC721 internal functions
  */
-abstract contract ERC721BaseInternal is
-    IERC721BaseInternal,
-    ERC2771ContextInternal
-{
+abstract contract ERC721BaseInternal is IERC721BaseInternal {
     using AddressUtils for address;
     using EnumerableMap for EnumerableMap.UintToAddressMap;
     using EnumerableSet for EnumerableSet.UintSet;
 
-    function _balanceOf(
-        address account
-    ) internal view virtual returns (uint256) {
-        if (account == address(0)) revert ERC721Base__BalanceQueryZeroAddress();
+    function _balanceOf(address account) internal view virtual returns (uint256) {
+        if (account == address(0)) revert("ERC721Base: Balance Query Zero Address");
         return ERC721BaseStorage.layout().holderTokens[account].length();
     }
 
     function _ownerOf(uint256 tokenId) internal view virtual returns (address) {
         address owner = ERC721BaseStorage.layout().tokenOwners.get(tokenId);
-        if (owner == address(0)) revert ERC721Base__InvalidOwner();
+        if (owner == address(0)) revert("ERC721Base: Invalid Owner");
         return owner;
     }
 
@@ -39,37 +33,27 @@ abstract contract ERC721BaseInternal is
         return ERC721BaseStorage.layout().tokenOwners.contains(tokenId);
     }
 
-    function _getApproved(
-        uint256 tokenId
-    ) internal view virtual returns (address) {
-        if (!_exists(tokenId)) revert ERC721Base__NonExistentToken();
+    function _getApproved(uint256 tokenId) internal view virtual returns (address) {
+        if (!_exists(tokenId)) revert("ERC721Base: Non Existent Token");
 
         return ERC721BaseStorage.layout().tokenApprovals[tokenId];
     }
 
-    function _isApprovedForAll(
-        address account,
-        address operator
-    ) internal view virtual returns (bool) {
+    function _isApprovedForAll(address account, address operator) internal view virtual returns (bool) {
         return ERC721BaseStorage.layout().operatorApprovals[account][operator];
     }
 
-    function _isApprovedOrOwner(
-        address spender,
-        uint256 tokenId
-    ) internal view virtual returns (bool) {
-        if (!_exists(tokenId)) revert ERC721Base__NonExistentToken();
+    function _isApprovedOrOwner(address spender, uint256 tokenId) internal view virtual returns (bool) {
+        if (!_exists(tokenId)) revert("ERC721Base: Non Existent Token");
 
         address owner = _ownerOf(tokenId);
 
-        return (spender == owner ||
-            _getApproved(tokenId) == spender ||
-            _isApprovedForAll(owner, spender));
+        return (spender == owner || _getApproved(tokenId) == spender || _isApprovedForAll(owner, spender));
     }
 
     function _mint(address to, uint256 tokenId) internal virtual {
-        if (to == address(0)) revert ERC721Base__MintToZeroAddress();
-        if (_exists(tokenId)) revert ERC721Base__TokenAlreadyMinted();
+        if (to == address(0)) revert("ERC721Base: Mint To Zero Address");
+        if (_exists(tokenId)) revert("ERC721Base: Token Already Minted");
 
         _beforeTokenTransfer(address(0), to, tokenId);
 
@@ -85,14 +69,10 @@ abstract contract ERC721BaseInternal is
         _safeMint(to, tokenId, "");
     }
 
-    function _safeMint(
-        address to,
-        uint256 tokenId,
-        bytes memory data
-    ) internal virtual {
+    function _safeMint(address to, uint256 tokenId, bytes memory data) internal virtual {
         _mint(to, tokenId);
         if (!_checkOnERC721Received(address(0), to, tokenId, data))
-            revert ERC721Base__ERC721ReceiverNotImplemented();
+            revert("ERC721Base: ERC721Receiver Not Implemented");
     }
 
     function _burn(uint256 tokenId) internal virtual {
@@ -111,15 +91,11 @@ abstract contract ERC721BaseInternal is
         emit Transfer(owner, address(0), tokenId);
     }
 
-    function _transfer(
-        address from,
-        address to,
-        uint256 tokenId
-    ) internal virtual {
+    function _transfer(address from, address to, uint256 tokenId) internal virtual {
         address owner = _ownerOf(tokenId);
 
-        if (owner != from) revert ERC721Base__NotTokenOwner();
-        if (to == address(0)) revert ERC721Base__TransferToZeroAddress();
+        if (owner != from) revert("ERC721Base: Not Token Owner");
+        if (to == address(0)) revert("ERC721Base: Transfer To Zero Address");
 
         _beforeTokenTransfer(from, to, tokenId);
 
@@ -134,45 +110,24 @@ abstract contract ERC721BaseInternal is
         emit Transfer(from, to, tokenId);
     }
 
-    function _transferFrom(
-        address from,
-        address to,
-        uint256 tokenId
-    ) internal virtual {
+    function _transferFrom(address from, address to, uint256 tokenId) internal virtual {
         _handleTransferMessageValue(from, to, tokenId, msg.value);
-        if (!_isApprovedOrOwner(_msgSender(), tokenId))
-            revert ERC721Base__NotOwnerOrApproved();
+        if (!_isApprovedOrOwner(msg.sender, tokenId)) revert("ERC721Base: Not Owner Or Approved");
         _transfer(from, to, tokenId);
     }
 
-    function _safeTransfer(
-        address from,
-        address to,
-        uint256 tokenId,
-        bytes memory data
-    ) internal virtual {
+    function _safeTransfer(address from, address to, uint256 tokenId, bytes memory data) internal virtual {
         _transfer(from, to, tokenId);
-        if (!_checkOnERC721Received(from, to, tokenId, data))
-            revert ERC721Base__ERC721ReceiverNotImplemented();
+        if (!_checkOnERC721Received(from, to, tokenId, data)) revert("ERC721Base: ERC721Receiver Not Implemented");
     }
 
-    function _safeTransferFrom(
-        address from,
-        address to,
-        uint256 tokenId
-    ) internal virtual {
+    function _safeTransferFrom(address from, address to, uint256 tokenId) internal virtual {
         _safeTransferFrom(from, to, tokenId, "");
     }
 
-    function _safeTransferFrom(
-        address from,
-        address to,
-        uint256 tokenId,
-        bytes memory data
-    ) internal virtual {
+    function _safeTransferFrom(address from, address to, uint256 tokenId, bytes memory data) internal virtual {
         _handleTransferMessageValue(from, to, tokenId, msg.value);
-        if (!_isApprovedOrOwner(_msgSender(), tokenId))
-            revert ERC721Base__NotOwnerOrApproved();
+        if (!_isApprovedOrOwner(msg.sender, tokenId)) revert("ERC721Base: Not Owner Or Approved");
         _safeTransfer(from, to, tokenId, data);
     }
 
@@ -181,23 +136,17 @@ abstract contract ERC721BaseInternal is
 
         address owner = _ownerOf(tokenId);
 
-        if (operator == owner) revert ERC721Base__SelfApproval();
-        if (_msgSender() != owner && !_isApprovedForAll(owner, _msgSender()))
-            revert ERC721Base__NotOwnerOrApproved();
+        if (operator == owner) revert("ERC721Base: Self Approval");
+        if (msg.sender != owner && !_isApprovedForAll(owner, msg.sender)) revert("ERC721Base: Not Owner Or Approved");
 
         ERC721BaseStorage.layout().tokenApprovals[tokenId] = operator;
         emit Approval(owner, operator, tokenId);
     }
 
-    function _setApprovalForAll(
-        address operator,
-        bool status
-    ) internal virtual {
-        if (operator == _msgSender()) revert ERC721Base__SelfApproval();
-        ERC721BaseStorage.layout().operatorApprovals[_msgSender()][
-            operator
-        ] = status;
-        emit ApprovalForAll(_msgSender(), operator, status);
+    function _setApprovalForAll(address operator, bool status) internal virtual {
+        if (operator == msg.sender) revert("ERC721Base: Self Approval");
+        ERC721BaseStorage.layout().operatorApprovals[msg.sender][operator] = status;
+        emit ApprovalForAll(msg.sender, operator, status);
     }
 
     function _checkOnERC721Received(
@@ -211,13 +160,7 @@ abstract contract ERC721BaseInternal is
         }
 
         bytes memory returnData = to.functionCall(
-            abi.encodeWithSelector(
-                IERC721Receiver(to).onERC721Received.selector,
-                _msgSender(),
-                from,
-                tokenId,
-                data
-            ),
+            abi.encodeWithSelector(IERC721Receiver(to).onERC721Received.selector, msg.sender, from, tokenId, data),
             "ERC721: transfer to non ERC721Receiver implementer"
         );
 
@@ -231,11 +174,7 @@ abstract contract ERC721BaseInternal is
      * @param tokenId id of transferred token
      * @param value message value
      */
-    function _handleApproveMessageValue(
-        address operator,
-        uint256 tokenId,
-        uint256 value
-    ) internal virtual {}
+    function _handleApproveMessageValue(address operator, uint256 tokenId, uint256 value) internal virtual {}
 
     /**
      * @notice ERC721 hook, called before externally called transfers for processing of included message value
@@ -244,12 +183,7 @@ abstract contract ERC721BaseInternal is
      * @param tokenId id of transferred token
      * @param value message value
      */
-    function _handleTransferMessageValue(
-        address from,
-        address to,
-        uint256 tokenId,
-        uint256 value
-    ) internal virtual {}
+    function _handleTransferMessageValue(address from, address to, uint256 tokenId, uint256 value) internal virtual {}
 
     /**
      * @notice ERC721 hook, called before all transfers including mint and burn
@@ -258,9 +192,5 @@ abstract contract ERC721BaseInternal is
      * @param to receiver of token
      * @param tokenId id of transferred token
      */
-    function _beforeTokenTransfer(
-        address from,
-        address to,
-        uint256 tokenId
-    ) internal virtual {}
+    function _beforeTokenTransfer(address from, address to, uint256 tokenId) internal virtual {}
 }

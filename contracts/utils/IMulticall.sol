@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 // FeverTokens Contracts v1.0.0
 
-pragma solidity ^0.8.20;
+pragma solidity 0.8.26;
 
 /**
  * @title Interface for the Multicall utility contract
@@ -12,7 +12,5 @@ interface IMulticall {
      * @param data array of function call data payloads
      * @return results array of function call results
      */
-    function multicall(
-        bytes[] calldata data
-    ) external returns (bytes[] memory results);
+    function multicall(bytes[] calldata data) external returns (bytes[] memory results);
 }
