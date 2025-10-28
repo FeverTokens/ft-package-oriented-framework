@@ -1,10 +1,10 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: Apache-2.0
 // FeverTokens Contracts v1.0.0
 
 pragma solidity 0.8.26;
 
-import {IERC20Burnable} from "./IERC20Burnable.sol";
-import {ERC20BurnableInternal} from "./ERC20BurnableInternal.sol";
+import { IERC20Burnable } from './IERC20Burnable.sol';
+import { ERC20BurnableInternal } from './ERC20BurnableInternal.sol';
 
 /**
  * @title Extension of {ERC20} that allows users or approved operators to burn tokens.

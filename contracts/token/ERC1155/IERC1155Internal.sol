@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: Apache-2.0
 // FeverTokens Contracts v1.0.0
 
 pragma solidity 0.8.26;
@@ -34,9 +34,5 @@ interface IERC1155Internal {
      * @dev Emitted when `account` grants or revokes permission to `operator` to transfer their tokens, according to
      * `approved`.
      */
-    event ApprovalForAll(
-        address indexed account,
-        address indexed operator,
-        bool approved
-    );
+    event ApprovalForAll(address indexed account, address indexed operator, bool approved);
 }

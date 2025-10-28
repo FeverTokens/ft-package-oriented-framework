@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: Apache-2.0
 // FeverTokens Contracts v1.0.0
 
 pragma solidity 0.8.26;
@@ -10,7 +10,7 @@ pragma solidity 0.8.26;
 library UintUtils {
     error UintUtils__InsufficientHexLength();
 
-    bytes16 private constant HEX_SYMBOLS = "0123456789abcdef";
+    bytes16 private constant HEX_SYMBOLS = '0123456789abcdef';
 
     function add(uint256 a, int256 b) internal pure returns (uint256) {
         return b < 0 ? sub(a, -b) : a + uint256(b);
@@ -22,7 +22,7 @@ library UintUtils {
 
     function toString(uint256 value) internal pure returns (string memory) {
         if (value == 0) {
-            return "0";
+            return '0';
         }
 
         uint256 temp = value;
@@ -46,7 +46,7 @@ library UintUtils {
 
     function toHexString(uint256 value) internal pure returns (string memory) {
         if (value == 0) {
-            return "0x00";
+            return '0x00';
         }
 
         uint256 length = 0;
@@ -62,8 +62,8 @@ library UintUtils {
 
     function toHexString(uint256 value, uint256 length) internal pure returns (string memory) {
         bytes memory buffer = new bytes(2 * length + 2);
-        buffer[0] = "0";
-        buffer[1] = "x";
+        buffer[0] = '0';
+        buffer[1] = 'x';
 
         unchecked {
             for (uint256 i = 2 * length + 1; i > 1; --i) {
@@ -72,7 +72,7 @@ library UintUtils {
             }
         }
 
-        if (value != 0) revert("UintUtils: Insufficient Hex Length");
+        if (value != 0) revert('UintUtils: Insufficient Hex Length');
 
         return string(buffer);
     }

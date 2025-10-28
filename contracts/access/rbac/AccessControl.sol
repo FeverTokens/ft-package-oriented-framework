@@ -1,10 +1,10 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: Apache-2.0
 // FeverTokens Contracts v1.0.0
 
 pragma solidity 0.8.26;
 
-import {IAccessControl} from "./IAccessControl.sol";
-import {AccessControlInternal} from "./AccessControlInternal.sol";
+import { IAccessControl } from './IAccessControl.sol';
+import { AccessControlInternal } from './AccessControlInternal.sol';
 
 /**
  * @title Role-based access control system
@@ -14,7 +14,10 @@ abstract contract AccessControl is IAccessControl, AccessControlInternal {
     /**
      * @inheritdoc IAccessControl
      */
-    function grantRole(bytes32 role, address account) external virtual onlyRole(_getRoleAdmin(role)) {
+    function grantRole(
+        bytes32 role,
+        address account
+    ) external virtual onlyRole(_getRoleAdmin(role)) {
         _grantRole(role, account);
     }
 
@@ -35,7 +38,10 @@ abstract contract AccessControl is IAccessControl, AccessControlInternal {
     /**
      * @inheritdoc IAccessControl
      */
-    function revokeRole(bytes32 role, address account) external virtual onlyRole(_getRoleAdmin(role)) {
+    function revokeRole(
+        bytes32 role,
+        address account
+    ) external virtual onlyRole(_getRoleAdmin(role)) {
         _revokeRole(role, account);
     }
 

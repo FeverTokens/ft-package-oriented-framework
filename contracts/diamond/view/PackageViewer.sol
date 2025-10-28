@@ -1,10 +1,10 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: Apache-2.0
 
 pragma solidity 0.8.26;
 
-import {DiamondBaseStorage} from "../base/DiamondBaseStorage.sol";
-import {Facet, IPackageViewer} from "./IPackageViewer.sol";
-import {PackageViewerInternal} from "./PackageViewerInternal.sol";
+import { DiamondBaseStorage } from '../base/DiamondBaseStorage.sol';
+import { Facet, IPackageViewer } from './IPackageViewer.sol';
+import { PackageViewerInternal } from './PackageViewerInternal.sol';
 
 /**
  * @title PackageViewer: EIP-2535 "Diamond" proxy introspection contract
@@ -21,7 +21,9 @@ contract PackageViewer is IPackageViewer, PackageViewerInternal {
     /**
      * @inheritdoc IPackageViewer
      */
-    function facetFunctionSelectors(address facet) external view returns (bytes4[] memory selectors) {
+    function facetFunctionSelectors(
+        address facet
+    ) external view returns (bytes4[] memory selectors) {
         return _facetFunctionSelectors(facet);
     }
 

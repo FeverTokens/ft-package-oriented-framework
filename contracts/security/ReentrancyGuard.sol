@@ -1,10 +1,10 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: Apache-2.0
 // FeverTokens Contracts v1.0.0
 
 pragma solidity 0.8.26;
 
-import {IReentrancyGuard} from "./IReentrancyGuard.sol";
-import {ReentrancyGuardInternal} from "./ReentrancyGuardInternal.sol";
+import { IReentrancyGuard } from './IReentrancyGuard.sol';
+import { ReentrancyGuardInternal } from './ReentrancyGuardInternal.sol';
 
 /**
  * @title Contract module that helps prevent reentrant calls to a function.

@@ -1,10 +1,10 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: Apache-2.0
 // FeverTokens Contracts v1.0.0
 
 pragma solidity 0.8.26;
 
-import {IPausableInternal} from "./IPausableInternal.sol";
-import {PausableStorage} from "./PausableStorage.sol";
+import { IPausableInternal } from './IPausableInternal.sol';
+import { PausableStorage } from './PausableStorage.sol';
 
 /**
  * @title Internal functions for Pausable security control module.
@@ -12,14 +12,14 @@ import {PausableStorage} from "./PausableStorage.sol";
 abstract contract PausableInternal is IPausableInternal {
     modifier whenPaused() {
         if (!_paused()) {
-            revert("Pausable: Not Paused");
+            revert('Pausable: Not Paused');
         }
         _;
     }
 
     modifier whenNotPaused() {
         if (_paused()) {
-            revert("Pausable: Paused");
+            revert('Pausable: Paused');
         }
         _;
     }

@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: Apache-2.0
 // FeverTokens Contracts v1.0.0
 
 pragma solidity 0.8.26;
@@ -20,7 +20,7 @@ library ECDSA {
      * @return recovered message signer
      */
     function recover(bytes32 hash, bytes memory signature) internal pure returns (address) {
-        if (signature.length != 65) revert("ECDSA: Invalid Signature Length");
+        if (signature.length != 65) revert('ECDSA: Invalid Signature Length');
 
         bytes32 r;
         bytes32 s;
@@ -53,12 +53,13 @@ library ECDSA {
         // with 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141 - s1 and flip v from 27 to 28 or
         // vice versa. If your library also generates signatures with 0/1 for v instead 27/28, add 27 to v to accept
         // these malleable signatures as well.
-        if (uint256(s) > 0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF5D576E7357A4501DDFE92F46681B20A0) revert("ECDSA: Invalid S");
-        if (v != 27 && v != 28) revert("ECDSA: Invalid V");
+        if (uint256(s) > 0x7FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF5D576E7357A4501DDFE92F46681B20A0)
+            revert('ECDSA: Invalid S');
+        if (v != 27 && v != 28) revert('ECDSA: Invalid V');
 
         // If the signature is valid (and not malleable), return the signer address
         address signer = ecrecover(hash, v, r, s);
-        if (signer == address(0)) revert("ECDSA: Invalid Signature");
+        if (signer == address(0)) revert('ECDSA: Invalid Signature');
 
         return signer;
     }
@@ -69,6 +70,6 @@ library ECDSA {
      * @return signed message hash
      */
     function toEthSignedMessageHash(bytes32 hash) internal pure returns (bytes32) {
-        return keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", hash));
+        return keccak256(abi.encodePacked('\x19Ethereum Signed Message:\n32', hash));
     }
 }

@@ -1,10 +1,10 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: Apache-2.0
 
 pragma solidity 0.8.26;
 
-import {Proxy} from "../proxy/Proxy.sol";
-import {IDiamondBase} from "./IDiamondBase.sol";
-import {DiamondBaseStorage} from "./DiamondBaseStorage.sol";
+import { Proxy } from '../proxy/Proxy.sol';
+import { IDiamondBase } from './IDiamondBase.sol';
+import { DiamondBaseStorage } from './DiamondBaseStorage.sol';
 
 /**
  * @title EIP-2535 "Diamond" proxy base contract

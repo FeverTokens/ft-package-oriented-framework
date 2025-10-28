@@ -1,12 +1,12 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: Apache-2.0
 // FeverTokens Contracts v1.0.0
 
 pragma solidity 0.8.26;
 
-import "./IEIP712Internal.sol";
-import "./EIP712Storage.sol";
-import { InitializableInternal } from "../initializable/InitializableInternal.sol";
-import "@openzeppelin/contracts/utils/cryptography/MessageHashUtils.sol";
+import './IEIP712Internal.sol';
+import './EIP712Storage.sol';
+import { InitializableInternal } from '../initializable/InitializableInternal.sol';
+import '@openzeppelin/contracts/utils/cryptography/MessageHashUtils.sol';
 
 /**
  * @title EIP712 Internal Abstract Contract
@@ -16,7 +16,7 @@ import "@openzeppelin/contracts/utils/cryptography/MessageHashUtils.sol";
 abstract contract EIP712Internal is IEIP712Internal, InitializableInternal {
     bytes32 private constant TYPE_HASH =
         keccak256(
-            "EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)"
+            'EIP712Domain(string name,string version,uint256 chainId,address verifyingContract)'
         );
 
     /**
@@ -66,11 +66,10 @@ abstract contract EIP712Internal is IEIP712Internal, InitializableInternal {
 
         // If the hashed name and version in storage are non-zero, the contract hasn't been properly initialized
         // and the EIP712 domain is not reliable, as it will be missing name and version.
-        if ($._hashedName != 0 || $._hashedVersion != 0)
-            revert EIP712Uninitialized();
+        if ($._hashedName != 0 || $._hashedVersion != 0) revert EIP712Uninitialized();
 
         return (
-            hex"0f",
+            hex'0f',
             _EIP712Name(),
             _EIP712Version(),
             block.chainid,
@@ -107,11 +106,8 @@ abstract contract EIP712Internal is IEIP712Internal, InitializableInternal {
      * @dev Given an already hashed struct, this function returns the hash of the fully encoded EIP712 message for this domain.
      * This hash can be used together with {ECDSA-recover} to obtain the signer of a message.
      */
-    function _hashTypedDataV4(
-        bytes32 structHash
-    ) internal view returns (bytes32) {
-        return
-            MessageHashUtils.toTypedDataHash(_domainSeparatorV4(), structHash);
+    function _hashTypedDataV4(bytes32 structHash) internal view returns (bytes32) {
+        return MessageHashUtils.toTypedDataHash(_domainSeparatorV4(), structHash);
     }
 
     /**
@@ -147,7 +143,7 @@ abstract contract EIP712Internal is IEIP712Internal, InitializableInternal {
             if (hashedName != 0) {
                 return hashedName;
             } else {
-                return keccak256("");
+                return keccak256('');
             }
         }
     }
@@ -165,7 +161,7 @@ abstract contract EIP712Internal is IEIP712Internal, InitializableInternal {
             if (hashedVersion != 0) {
                 return hashedVersion;
             } else {
-                return keccak256("");
+                return keccak256('');
             }
         }
     }

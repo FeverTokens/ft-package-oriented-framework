@@ -1,9 +1,9 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: Apache-2.0
 // FeverTokens Contracts v1.0.0
 
 pragma solidity 0.8.26;
 
-import {IERC721Internal} from "../IERC721Internal.sol";
+import { IERC721Internal } from '../IERC721Internal.sol';
 
 /**
  * @title ERC721 base interface

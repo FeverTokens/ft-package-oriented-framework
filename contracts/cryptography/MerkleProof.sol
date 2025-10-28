@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: Apache-2.0
 // FeverTokens Contracts v1.0.0
 
 pragma solidity 0.8.26;
@@ -15,7 +15,11 @@ library MerkleProof {
      * @param leaf element whose presence in Merkle tree to prove
      * @return whether leaf is proven to be contained within Merkle tree defined by root
      */
-    function verify(bytes32[] memory proof, bytes32 root, bytes32 leaf) internal pure returns (bool) {
+    function verify(
+        bytes32[] memory proof,
+        bytes32 root,
+        bytes32 leaf
+    ) internal pure returns (bool) {
         unchecked {
             bytes32 computedHash = leaf;
 

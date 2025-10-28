@@ -1,9 +1,9 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: Apache-2.0
 // FeverTokens Contracts v1.0.0
 
 pragma solidity 0.8.26;
 
-import {IERC1155Internal} from "./IERC1155Internal.sol";
+import { IERC1155Internal } from './IERC1155Internal.sol';
 
 /**
  * @title ERC1155 interface
@@ -52,7 +52,13 @@ interface IERC1155 is IERC1155Internal {
      * @param amount quantity of tokens to transfer
      * @param data data payload
      */
-    function safeTransferFrom(address from, address to, uint256 id, uint256 amount, bytes calldata data) external;
+    function safeTransferFrom(
+        address from,
+        address to,
+        uint256 id,
+        uint256 amount,
+        bytes calldata data
+    ) external;
 
     /**
      * @notice transfer batch of tokens between given addresses, checking for ERC1155Receiver implementation if applicable

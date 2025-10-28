@@ -1,11 +1,11 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: Apache-2.0
 
 pragma solidity 0.8.26;
 
-import {DiamondBaseStorage} from "../base/DiamondBaseStorage.sol";
-import {FacetCutAction, FacetCut, IPackageControllerInternal} from "./IPackageControllerInternal.sol";
-import {OwnableInternal} from "../../access/ownable/OwnableInternal.sol";
-import {InitializableInternal} from "../../initializable/InitializableInternal.sol";
+import { DiamondBaseStorage } from '../base/DiamondBaseStorage.sol';
+import { FacetCutAction, FacetCut, IPackageControllerInternal } from './IPackageControllerInternal.sol';
+import { OwnableInternal } from '../../access/ownable/OwnableInternal.sol';
+import { InitializableInternal } from '../../initializable/InitializableInternal.sol';
 
 /**
  * @title PackageControllerInternal: EIP-2535 "Diamond" proxy update internal contract
@@ -16,10 +16,8 @@ abstract contract PackageControllerInternal is
     InitializableInternal,
     OwnableInternal
 {
-    bytes32 private constant CLEAR_ADDRESS_MASK =
-        bytes32(uint256(0xffffffffffffffffffffffff));
-    bytes32 private constant CLEAR_SELECTOR_MASK =
-        bytes32(uint256(0xffffffff << 224));
+    bytes32 private constant CLEAR_ADDRESS_MASK = bytes32(uint256(0xffffffffffffffffffffffff));
+    bytes32 private constant CLEAR_SELECTOR_MASK = bytes32(uint256(0xffffffff << 224));
 
     function __PackageController_init(address owner) internal {
         __PackageController_init_unchained();
@@ -37,19 +35,15 @@ abstract contract PackageControllerInternal is
      * @param target optional recipient of initialization delegatecall
      * @param data optional initialization call data
      */
-    function _diamondCut(
-        FacetCut[] memory facetCuts,
-        address target,
-        bytes memory data
-    ) internal {
+    function _diamondCut(FacetCut[] memory facetCuts, address target, bytes memory data) internal {
         // Only owner or during construction (when contract has no code yet)
         uint256 contractSize;
         assembly {
             contractSize := extcodesize(address())
         }
-        
+
         if (contractSize > 0 && msg.sender != _owner()) {
-            revert("PackageController: Must be contract owner");
+            revert('PackageController: Must be contract owner');
         }
 
         DiamondBaseStorage.Layout storage $ = DiamondBaseStorage.layout();
@@ -115,10 +109,8 @@ abstract contract PackageControllerInternal is
         FacetCut memory facetCut
     ) internal returns (uint256, bytes32) {
         unchecked {
-            if (
-                facetCut.target != address(this) &&
-                !_isContract(facetCut.target)
-            ) revert PackageControllerTargetHasNoCode();
+            if (facetCut.target != address(this) && !_isContract(facetCut.target))
+                revert PackageControllerTargetHasNoCode();
 
             for (uint256 i; i < facetCut.selectors.length; i++) {
                 bytes4 selector = facetCut.selectors[i];
@@ -128,15 +120,12 @@ abstract contract PackageControllerInternal is
                     revert PackageControllerSelectorAlreadyAdded();
 
                 // add facet for selector
-                $.facets[selector] =
-                    bytes20(facetCut.target) |
-                    bytes32(selectorCount);
+                $.facets[selector] = bytes20(facetCut.target) | bytes32(selectorCount);
                 uint256 selectorInSlotPosition = (selectorCount & 7) << 5;
 
                 // clear selector position in slot and add selector
                 selectorSlot =
-                    (selectorSlot &
-                        ~(CLEAR_SELECTOR_MASK >> selectorInSlotPosition)) |
+                    (selectorSlot & ~(CLEAR_SELECTOR_MASK >> selectorInSlotPosition)) |
                     (bytes32(selector) >> selectorInSlotPosition);
 
                 // if slot is full then write it to storage
@@ -159,8 +148,7 @@ abstract contract PackageControllerInternal is
         FacetCut memory facetCut
     ) internal returns (uint256, bytes32) {
         unchecked {
-            if (facetCut.target != address(0))
-                revert PackageControllerRemoveTargetNotZeroAddress();
+            if (facetCut.target != address(0)) revert PackageControllerRemoveTargetNotZeroAddress();
 
             uint256 selectorSlotCount = selectorCount >> 3;
             uint256 selectorInSlotIndex = selectorCount & 7;
@@ -172,10 +160,8 @@ abstract contract PackageControllerInternal is
                 if (address(bytes20(oldFacet)) == address(0))
                     revert PackageControllerSelectorNotFound();
 
-                if (
-                    address(bytes20(oldFacet)) == address(this) ||
-                    selector == 0x1f931c1c
-                ) revert PackageControllerSelectorIsImmutable(); // 0x1f931c1c == diamondCut
+                if (address(bytes20(oldFacet)) == address(this) || selector == 0x1f931c1c)
+                    revert PackageControllerSelectorIsImmutable(); // 0x1f931c1c == diamondCut
 
                 if (selectorSlot == 0) {
                     selectorSlotCount--;
@@ -192,9 +178,7 @@ abstract contract PackageControllerInternal is
                 // adding a block here prevents stack too deep error
                 {
                     // replace selector with last selector in $.facets
-                    lastSelector = bytes4(
-                        selectorSlot << (selectorInSlotIndex << 5)
-                    );
+                    lastSelector = bytes4(selectorSlot << (selectorInSlotIndex << 5));
 
                     if (lastSelector != selector) {
                         // update last selector slot position info
@@ -210,15 +194,11 @@ abstract contract PackageControllerInternal is
                 }
 
                 if (oldSelectorsSlotCount != selectorSlotCount) {
-                    bytes32 oldSelectorSlot = $.selectorSlots[
-                        oldSelectorsSlotCount
-                    ];
+                    bytes32 oldSelectorSlot = $.selectorSlots[oldSelectorsSlotCount];
 
                     // clears the selector we are deleting and puts the last selector in its place.
                     oldSelectorSlot =
-                        (oldSelectorSlot &
-                            ~(CLEAR_SELECTOR_MASK >>
-                                oldSelectorInSlotPosition)) |
+                        (oldSelectorSlot & ~(CLEAR_SELECTOR_MASK >> oldSelectorInSlotPosition)) |
                         (bytes32(lastSelector) >> oldSelectorInSlotPosition);
 
                     // update storage with the modified slot
@@ -226,9 +206,7 @@ abstract contract PackageControllerInternal is
                 } else {
                     // clears the selector we are deleting and puts the last selector in its place.
                     selectorSlot =
-                        (selectorSlot &
-                            ~(CLEAR_SELECTOR_MASK >>
-                                oldSelectorInSlotPosition)) |
+                        (selectorSlot & ~(CLEAR_SELECTOR_MASK >> oldSelectorInSlotPosition)) |
                         (bytes32(lastSelector) >> oldSelectorInSlotPosition);
                 }
 
@@ -249,25 +227,21 @@ abstract contract PackageControllerInternal is
         FacetCut memory facetCut
     ) internal {
         unchecked {
-            if (!_isContract(facetCut.target))
-                revert PackageControllerTargetHasNoCode();
+            if (!_isContract(facetCut.target)) revert PackageControllerTargetHasNoCode();
 
             for (uint256 i; i < facetCut.selectors.length; i++) {
                 bytes4 selector = facetCut.selectors[i];
                 bytes32 oldFacet = $.facets[selector];
                 address oldFacetAddress = address(bytes20(oldFacet));
 
-                if (oldFacetAddress == address(0))
-                    revert PackageControllerSelectorNotFound();
+                if (oldFacetAddress == address(0)) revert PackageControllerSelectorNotFound();
                 if (oldFacetAddress == address(this) || selector == 0x1f931c1c)
                     revert PackageControllerSelectorIsImmutable(); // 0x1f931c1c == diamondCut
                 if (oldFacetAddress == facetCut.target)
                     revert PackageControllerReplaceTargetIsIdentical();
 
                 // replace old facet address
-                $.facets[selector] =
-                    (oldFacet & CLEAR_ADDRESS_MASK) |
-                    bytes20(facetCut.target);
+                $.facets[selector] = (oldFacet & CLEAR_ADDRESS_MASK) | bytes20(facetCut.target);
             }
         }
     }
@@ -278,8 +252,7 @@ abstract contract PackageControllerInternal is
 
         if (target != address(0)) {
             if (target != address(this)) {
-                if (!_isContract(target))
-                    revert PackageControllerTargetHasNoCode();
+                if (!_isContract(target)) revert PackageControllerTargetHasNoCode();
             }
 
             (bool success, ) = target.delegatecall(data);

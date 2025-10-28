@@ -1,7 +1,7 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: Apache-2.0
 
 pragma solidity 0.8.26;
 
-import {IProxy} from "../proxy/IProxy.sol";
+import { IProxy } from '../proxy/IProxy.sol';
 
 interface IDiamondBase is IProxy {}

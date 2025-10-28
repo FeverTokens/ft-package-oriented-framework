@@ -1,13 +1,13 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: Apache-2.0
 // FeverTokens Contracts v1.0.0
 
 pragma solidity 0.8.26;
 
-import {IAccessControlInternal} from "./IAccessControlInternal.sol";
-import {AccessControlStorage} from "./AccessControlStorage.sol";
-import {EnumerableSet} from "../../data/EnumerableSet.sol";
-import {AddressUtils} from "../../utils/AddressUtils.sol";
-import {UintUtils} from "../../utils/UintUtils.sol";
+import { IAccessControlInternal } from './IAccessControlInternal.sol';
+import { AccessControlStorage } from './AccessControlStorage.sol';
+import { EnumerableSet } from '../../data/EnumerableSet.sol';
+import { AddressUtils } from '../../utils/AddressUtils.sol';
+import { UintUtils } from '../../utils/UintUtils.sol';
 
 /**
  * @title Role-based access control system
@@ -53,9 +53,9 @@ abstract contract AccessControlInternal is IAccessControlInternal {
             revert(
                 string(
                     abi.encodePacked(
-                        "AccessControl: account ",
+                        'AccessControl: account ',
                         account.toString(),
-                        " is missing role ",
+                        ' is missing role ',
                         uint256(role).toHexString(32)
                     )
                 )

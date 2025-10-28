@@ -1,19 +1,16 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: Apache-2.0
 // FeverTokens Contracts v1.0.0
 
 pragma solidity 0.8.26;
 
-import {IReentrancyGuardInternal} from "./IReentrancyGuardInternal.sol";
-import {ReentrancyGuardStorage} from "./ReentrancyGuardStorage.sol";
-import {InitializableInternal} from "../initializable/InitializableInternal.sol";
+import { IReentrancyGuardInternal } from './IReentrancyGuardInternal.sol';
+import { ReentrancyGuardStorage } from './ReentrancyGuardStorage.sol';
+import { InitializableInternal } from '../initializable/InitializableInternal.sol';
 
 /**
  * @title Internal functions for ReeantrancyGuard security control module.
  */
-abstract contract ReentrancyGuardInternal is
-    IReentrancyGuardInternal,
-    InitializableInternal
-{
+abstract contract ReentrancyGuardInternal is IReentrancyGuardInternal, InitializableInternal {
     // Booleans are more expensive than uint256 or any type that takes up a full
     // word because each write operation emits an extra SLOAD to first read the
     // slot's contents, replace the bits taken up by the boolean, and then write
@@ -33,15 +30,14 @@ abstract contract ReentrancyGuardInternal is
     }
 
     function __ReentrancyGuard_init_unchained() internal {
-        ReentrancyGuardStorage.Layout storage l = ReentrancyGuardStorage
-            .layout();
+        ReentrancyGuardStorage.Layout storage l = ReentrancyGuardStorage.layout();
         l.status = _NOT_ENTERED;
     }
 
     modifier nonReentrant() virtual {
         // On the first call to nonReentrant, status will be 0
         if (_isReentrancyGuardLocked()) {
-            revert("ReentrancyGuard: Reentrant Call");
+            revert('ReentrancyGuard: Reentrant Call');
         }
 
         // Any calls to nonReentrant after this point will fail

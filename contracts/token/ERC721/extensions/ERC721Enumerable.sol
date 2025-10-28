@@ -1,12 +1,12 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: Apache-2.0
 // FeverTokens Contracts v1.0.0
 
 pragma solidity 0.8.26;
 
-import {IERC721Enumerable} from "./IERC721Enumerable.sol";
-import {ERC721EnumerableInternal} from "./ERC721EnumerableInternal.sol";
-import {EnumerableMap} from "../../../data/EnumerableMap.sol";
-import {EnumerableSet} from "../../../data/EnumerableSet.sol";
+import { IERC721Enumerable } from './IERC721Enumerable.sol';
+import { ERC721EnumerableInternal } from './ERC721EnumerableInternal.sol';
+import { EnumerableMap } from '../../../data/EnumerableMap.sol';
+import { EnumerableSet } from '../../../data/EnumerableSet.sol';
 
 abstract contract ERC721Enumerable is IERC721Enumerable, ERC721EnumerableInternal {
     using EnumerableMap for EnumerableMap.UintToAddressMap;
