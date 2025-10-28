@@ -1,10 +1,10 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: Apache-2.0
 // FeverTokens Contracts v1.0.0
 
 pragma solidity 0.8.26;
 
-import {IOwnableInternal} from "./IOwnableInternal.sol";
-import {OwnableStorage} from "./OwnableStorage.sol";
+import { IOwnableInternal } from './IOwnableInternal.sol';
+import { OwnableStorage } from './OwnableStorage.sol';
 
 abstract contract OwnableInternal is IOwnableInternal {
     function __OwnableInternal_init(address owner) internal {
@@ -16,7 +16,7 @@ abstract contract OwnableInternal is IOwnableInternal {
     }
 
     modifier onlyOwner() {
-        require(msg.sender == _owner(), "ERC173: sender must be owner");
+        require(msg.sender == _owner(), 'ERC173: sender must be owner');
         _;
     }
 

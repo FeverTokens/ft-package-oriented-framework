@@ -1,8 +1,8 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: Apache-2.0
 
 pragma solidity 0.8.26;
 
-import {Facet} from "./IPackageViewerInternal.sol";
+import { Facet } from './IPackageViewerInternal.sol';
 
 /**
  * @title Package Viewer (Diamond proxy introspection) interface
@@ -20,7 +20,9 @@ interface IPackageViewer {
      * @param facet address of facet to query
      * @return selectors array of function selectors
      */
-    function facetFunctionSelectors(address facet) external view returns (bytes4[] memory selectors);
+    function facetFunctionSelectors(
+        address facet
+    ) external view returns (bytes4[] memory selectors);
 
     /**
      * @notice get addresses of all facets used by diamond

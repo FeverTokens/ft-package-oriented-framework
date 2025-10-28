@@ -1,17 +1,22 @@
+# Node dependencies
 node_modules
 
+# Coverage reports and generated typings
 coverage
 coverage.json
 factories
 typechain
 typechain-types
 
+# Hardhat build output
 cache
 artifacts
 
+# Local environment and editor files
 .env
 .idea
 .DS_Store
 
+# Sensitive keys generated locally
 .generatedWallet
 .privateKeyDeploy

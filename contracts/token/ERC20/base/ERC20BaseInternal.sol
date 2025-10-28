@@ -1,11 +1,11 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: Apache-2.0
 // FeverTokens Contracts v1.0.0
 
 pragma solidity 0.8.26;
 
-import {IERC20BaseInternal} from "./IERC20BaseInternal.sol";
-import {ERC20BaseStorage} from "./ERC20BaseStorage.sol";
-import {ReentrancyGuard} from "../../../security/ReentrancyGuard.sol";
+import { IERC20BaseInternal } from './IERC20BaseInternal.sol';
+import { ERC20BaseStorage } from './ERC20BaseStorage.sol';
+import { ReentrancyGuard } from '../../../security/ReentrancyGuard.sol';
 
 /**
  * @title Base ERC20 internal functions, excluding optional extensions
@@ -31,9 +31,7 @@ abstract contract ERC20BaseInternal is ReentrancyGuard, IERC20BaseInternal {
      * @param account address to query
      * @return token balance
      */
-    function _balanceOf(
-        address account
-    ) internal view virtual returns (uint256) {
+    function _balanceOf(address account) internal view virtual returns (uint256) {
         return ERC20BaseStorage.layout().balances[account];
     }
 
@@ -43,10 +41,7 @@ abstract contract ERC20BaseInternal is ReentrancyGuard, IERC20BaseInternal {
      * @param spender recipient of allowance
      * @return token allowance
      */
-    function _allowance(
-        address holder,
-        address spender
-    ) internal view virtual returns (uint256) {
+    function _allowance(address holder, address spender) internal view virtual returns (uint256) {
         return ERC20BaseStorage.layout().allowances[holder][spender];
     }
 
@@ -62,9 +57,8 @@ abstract contract ERC20BaseInternal is ReentrancyGuard, IERC20BaseInternal {
         address spender,
         uint256 amount
     ) internal virtual returns (bool) {
-        if (holder == address(0))
-            revert("ERC20Base: Approve From Zero Address");
-        if (spender == address(0)) revert("ERC20Base: Approve To Zero Address");
+        if (holder == address(0)) revert('ERC20Base: Approve From Zero Address');
+        if (spender == address(0)) revert('ERC20Base: Approve To Zero Address');
 
         ERC20BaseStorage.layout().allowances[holder][spender] = amount;
 
@@ -120,8 +114,7 @@ abstract contract ERC20BaseInternal is ReentrancyGuard, IERC20BaseInternal {
     ) internal virtual returns (bool) {
         address holder = msg.sender;
         uint256 allowance = _allowance(holder, spender);
-        if (subtractedValue > allowance)
-            revert("ERC20Base: Insufficient Allowance");
+        if (subtractedValue > allowance) revert('ERC20Base: Insufficient Allowance');
 
         unchecked {
             _approve(holder, spender, allowance - subtractedValue);
@@ -136,7 +129,7 @@ abstract contract ERC20BaseInternal is ReentrancyGuard, IERC20BaseInternal {
      * @param amount quantity of tokens minted
      */
     function _mint(address account, uint256 amount) internal virtual {
-        if (account == address(0)) revert("ERC20Base: Mint To Zero Address");
+        if (account == address(0)) revert('ERC20Base: Mint To Zero Address');
 
         _beforeTokenTransfer(address(0), account, amount);
 
@@ -153,13 +146,13 @@ abstract contract ERC20BaseInternal is ReentrancyGuard, IERC20BaseInternal {
      * @param amount quantity of tokens burned
      */
     function _burn(address account, uint256 amount) internal virtual {
-        if (account == address(0)) revert("ERC20Base: Burn From Zero Address");
+        if (account == address(0)) revert('ERC20Base: Burn From Zero Address');
 
         _beforeTokenTransfer(account, address(0), amount);
 
         ERC20BaseStorage.Layout storage l = ERC20BaseStorage.layout();
         uint256 balance = l.balances[account];
-        if (amount > balance) revert("ERC20Base: Burn Exceeds Balance");
+        if (amount > balance) revert('ERC20Base: Burn Exceeds Balance');
         unchecked {
             l.balances[account] = balance - amount;
         }
@@ -181,10 +174,10 @@ abstract contract ERC20BaseInternal is ReentrancyGuard, IERC20BaseInternal {
         uint256 amount
     ) internal virtual returns (bool) {
         if (holder == address(0)) {
-            revert("ERC20Base: Transfer From Zero Address");
+            revert('ERC20Base: Transfer From Zero Address');
         }
         if (recipient == address(0)) {
-            revert("ERC20Base: Transfer To Zero Address");
+            revert('ERC20Base: Transfer To Zero Address');
         }
 
         _beforeTokenTransfer(holder, recipient, amount);
@@ -194,7 +187,7 @@ abstract contract ERC20BaseInternal is ReentrancyGuard, IERC20BaseInternal {
         uint256 holderBalance = l.balances[holder];
 
         if (amount > holderBalance) {
-            revert("ERC20Base: Transfer Exceeds Balance");
+            revert('ERC20Base: Transfer Exceeds Balance');
         }
 
         unchecked {
@@ -234,9 +227,5 @@ abstract contract ERC20BaseInternal is ReentrancyGuard, IERC20BaseInternal {
      * @param to receiver of tokens
      * @param amount quantity of tokens transferred
      */
-    function _beforeTokenTransfer(
-        address from,
-        address to,
-        uint256 amount
-    ) internal virtual {}
+    function _beforeTokenTransfer(address from, address to, uint256 amount) internal virtual {}
 }

@@ -1,8 +1,8 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: Apache-2.0
 
 pragma solidity 0.8.26;
 
-import {FacetCut, IPackageControllerInternal} from "./IPackageControllerInternal.sol";
+import { FacetCut, IPackageControllerInternal } from './IPackageControllerInternal.sol';
 
 /**
  * @title Package Controller (Diamond proxy upgrade) interface
@@ -15,5 +15,9 @@ interface IPackageController is IPackageControllerInternal {
      * @param target optional target of initialization delegatecall
      * @param data optional initialization function call data
      */
-    function diamondCut(FacetCut[] calldata facetCuts, address target, bytes calldata data) external;
+    function diamondCut(
+        FacetCut[] calldata facetCuts,
+        address target,
+        bytes calldata data
+    ) external;
 }

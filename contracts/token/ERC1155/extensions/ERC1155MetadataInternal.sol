@@ -1,11 +1,11 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: Apache-2.0
 // FeverTokens Contracts v1.0.0
 
 pragma solidity 0.8.26;
 
-import {IERC1155MetadataInternal} from "./IERC1155MetadataInternal.sol";
-import {ERC1155MetadataStorage} from "./ERC1155MetadataStorage.sol";
-import {UintUtils} from "../../../utils/UintUtils.sol";
+import { IERC1155MetadataInternal } from './IERC1155MetadataInternal.sol';
+import { ERC1155MetadataStorage } from './ERC1155MetadataStorage.sol';
+import { UintUtils } from '../../../utils/UintUtils.sol';
 
 /**
  * @title ERC1155Metadata internal functions

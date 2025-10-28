@@ -1,8 +1,8 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.26;
 
-import "./IEIP712.sol";
-import "./EIP712Internal.sol";
+import './IEIP712.sol';
+import './EIP712Internal.sol';
 
 /// @title EIP712 Package Contract
 /// @notice Provides EIP-712 domain information.

@@ -1,4 +1,4 @@
-# **FeverTokens Package-Oriented Framework**
+# **FeverTokens Packages**
 
 ## **🔍 Overview**
 
@@ -50,21 +50,23 @@ Defines the internal elements of the package: enums, structs, events, and errors
 
 ```solidity
 interface IMyPackageInternal {
- enum MyEnum { Option1, Option2 }
+  enum MyEnum {
+    Option1,
+    Option2
+  }
 
-    struct MyStruct1 {
-        uint256 value;
-        address addr;
-    }
+  struct MyStruct1 {
+    uint256 value;
+    address addr;
+  }
 
-    struct MyStruct2 {
-        bool active;
-        uint256 count;
-    }
+  struct MyStruct2 {
+    bool active;
+    uint256 count;
+  }
 
-    event MyEvent1(address indexed sender, uint256 value);
-    event MyEvent2(address indexed actor, bool action);
-
+  event MyEvent1(address indexed sender, uint256 value);
+  event MyEvent2(address indexed actor, bool action);
 }
 ```
 
@@ -75,11 +77,11 @@ interface IMyPackageInternal {
 Inherits the internal interface and exposes external functions.
 
 ```solidity
-import "./IMyPackageInternal.sol";
+import './IMyPackageInternal.sol';
 
 interface IMyPackage is IMyPackageInternal {
- function myFunction1(uint256 value1) external;
- function myFunction2(address addr, uint256 value2) external;
+  function myFunction1(uint256 value1) external;
+  function myFunction2(address addr, uint256 value2) external;
 }
 ```
 
@@ -90,28 +92,27 @@ interface IMyPackage is IMyPackageInternal {
 Encapsulates the state in a `Layout` struct, using a dedicated slot for namespacing based on [ERC-7201](https://eips.ethereum.org/EIPS/eip-7201).
 
 ```solidity
-import "./IMyPackageInternal.sol";
+import './IMyPackageInternal.sol';
 
 library MyPackageStorage {
-
- struct Layout {
+  struct Layout {
     uint256 value1;
     address addr1;
     uint256 value2;
     MyStruct1 myObject1;
     bool active;
- }
+  }
 
-    bytes32 constant STORAGE_SLOT =
-        keccak256(abi.encode(uint256(keccak256("company.storage.MyPackage")) - 1)) & ~bytes32(uint256(0xff));
+  bytes32 constant STORAGE_SLOT =
+    keccak256(abi.encode(uint256(keccak256('company.storage.MyPackage')) - 1)) &
+      ~bytes32(uint256(0xff));
 
-    function layout() internal pure returns (Layout storage l) {
-        bytes32 slot = STORAGE_SLOT;
-        assembly {
-            l.slot := slot
-        }
+  function layout() internal pure returns (Layout storage l) {
+    bytes32 slot = STORAGE_SLOT;
+    assembly {
+      l.slot := slot
     }
-
+  }
 }
 ```
 
@@ -122,22 +123,21 @@ library MyPackageStorage {
 Implements the core business logic using the namespaced storage.
 
 ```solidity
-import "./IMyPackageInternal.sol";
-import {MyPackageStorage} from "./MyPackageStorage.sol";
+import './IMyPackageInternal.sol';
+import { MyPackageStorage } from './MyPackageStorage.sol';
 
 abstract contract MyPackageInternal is IMyPackageInternal {
- using MyPackageStorage for MyPackageStorage.Layout;
+  using MyPackageStorage for MyPackageStorage.Layout;
 
-    function _myFunction1(uint256 value1) internal {
-        MyPackageStorage.Layout storage l = MyPackageStorage.layout();
-        // Logic using l.value1
-    }
+  function _myFunction1(uint256 value1) internal {
+    MyPackageStorage.Layout storage l = MyPackageStorage.layout();
+    // Logic using l.value1
+  }
 
-    function _myFunction2(address addr, uint256 value2) internal {
-        MyPackageStorage.Layout storage l = MyPackageStorage.layout();
-        // Logic using l.addr1 and l.value2
-    }
-
+  function _myFunction2(address addr, uint256 value2) internal {
+    MyPackageStorage.Layout storage l = MyPackageStorage.layout();
+    // Logic using l.addr1 and l.value2
+  }
 }
 ```
 
@@ -215,4 +215,4 @@ contract MyPackagePackage is IMyPackage, MyPackageInternal {
 
 ## **📚 License**
 
-Open-source under [MIT License](./LICENSE). You are free to use, modify, and integrate in compliance with the license.
+Open-source under the [Apache License 2.0](./LICENSE). You are free to use, modify, and integrate in compliance with the license.

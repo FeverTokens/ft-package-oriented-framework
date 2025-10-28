@@ -1,0 +1,16 @@
+{
+  "extends": [],
+  "rules": {
+    "compiler-version": ["error", "^0.8.26"],
+    "func-visibility": ["warn", { "ignoreConstructors": true }],
+    "quotes": ["error", "single"],
+    "custom-errors": "off",
+    "reason-string": ["warn", { "maxLength": 64 }],
+    "no-inline-assembly": "off",
+    "avoid-low-level-calls": "off",
+    "use-forbidden-name": "off",
+    "func-name-mixedcase": "off",
+    "no-unused-import": "off",
+    "no-empty-blocks": "off"
+  }
+}

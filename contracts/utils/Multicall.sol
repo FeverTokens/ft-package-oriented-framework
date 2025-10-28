@@ -1,9 +1,9 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: Apache-2.0
 // FeverTokens Contracts v1.0.0
 
 pragma solidity 0.8.26;
 
-import {IMulticall} from "./IMulticall.sol";
+import { IMulticall } from './IMulticall.sol';
 
 /**
  * @title Utility contract for supporting processing of multiple function calls in a single transaction

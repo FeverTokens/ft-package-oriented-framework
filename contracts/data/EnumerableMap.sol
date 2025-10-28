@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: Apache-2.0
 // FeverTokens Contracts v1.0.0
 
 pragma solidity 0.8.26;
@@ -30,13 +30,19 @@ library EnumerableMap {
         Map _inner;
     }
 
-    function at(AddressToAddressMap storage map, uint256 index) internal view returns (address, address) {
+    function at(
+        AddressToAddressMap storage map,
+        uint256 index
+    ) internal view returns (address, address) {
         (bytes32 key, bytes32 value) = _at(map._inner, index);
 
         return (address(uint160(uint256(key))), address(uint160(uint256(value))));
     }
 
-    function at(UintToAddressMap storage map, uint256 index) internal view returns (uint256, address) {
+    function at(
+        UintToAddressMap storage map,
+        uint256 index
+    ) internal view returns (uint256, address) {
         (bytes32 key, bytes32 value) = _at(map._inner, index);
         return (uint256(key), address(uint160(uint256(value))));
     }
@@ -65,7 +71,11 @@ library EnumerableMap {
         return address(uint160(uint256(_get(map._inner, bytes32(key)))));
     }
 
-    function set(AddressToAddressMap storage map, address key, address value) internal returns (bool) {
+    function set(
+        AddressToAddressMap storage map,
+        address key,
+        address value
+    ) internal returns (bool) {
         return _set(map._inner, bytes32(uint256(uint160(key))), bytes32(uint256(uint160(value))));
     }
 
@@ -113,7 +123,9 @@ library EnumerableMap {
         }
     }
 
-    function keys(AddressToAddressMap storage map) internal view returns (address[] memory keysOut) {
+    function keys(
+        AddressToAddressMap storage map
+    ) internal view returns (address[] memory keysOut) {
         uint256 len = map._inner._entries.length;
 
         keysOut = new address[](len);
@@ -137,7 +149,9 @@ library EnumerableMap {
         }
     }
 
-    function values(AddressToAddressMap storage map) internal view returns (address[] memory valuesOut) {
+    function values(
+        AddressToAddressMap storage map
+    ) internal view returns (address[] memory valuesOut) {
         uint256 len = map._inner._entries.length;
 
         valuesOut = new address[](len);
@@ -149,7 +163,9 @@ library EnumerableMap {
         }
     }
 
-    function values(UintToAddressMap storage map) internal view returns (address[] memory valuesOut) {
+    function values(
+        UintToAddressMap storage map
+    ) internal view returns (address[] memory valuesOut) {
         uint256 len = map._inner._entries.length;
 
         valuesOut = new address[](len);
@@ -162,7 +178,7 @@ library EnumerableMap {
     }
 
     function _at(Map storage map, uint256 index) private view returns (bytes32, bytes32) {
-        if (index >= map._entries.length) revert("EnumerableMap: Index Out Of Bounds");
+        if (index >= map._entries.length) revert('EnumerableMap: Index Out Of Bounds');
 
         MapEntry storage entry = map._entries[index];
         return (entry._key, entry._value);
@@ -178,7 +194,7 @@ library EnumerableMap {
 
     function _get(Map storage map, bytes32 key) private view returns (bytes32) {
         uint256 keyIndex = map._indexes[key];
-        if (keyIndex == 0) revert("EnumerableMap: Non Existent Key");
+        if (keyIndex == 0) revert('EnumerableMap: Non Existent Key');
         unchecked {
             return map._entries[keyIndex - 1]._value;
         }
@@ -188,7 +204,7 @@ library EnumerableMap {
         uint256 keyIndex = map._indexes[key];
 
         if (keyIndex == 0) {
-            map._entries.push(MapEntry({_key: key, _value: value}));
+            map._entries.push(MapEntry({ _key: key, _value: value }));
             map._indexes[key] = map._entries.length;
             return true;
         } else {

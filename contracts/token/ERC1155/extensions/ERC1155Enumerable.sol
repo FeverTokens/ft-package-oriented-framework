@@ -1,12 +1,12 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: Apache-2.0
 // FeverTokens Contracts v1.0.0
 
 pragma solidity 0.8.26;
 
-import {ERC1155BaseInternal} from "../base/ERC1155BaseInternal.sol";
-import {IERC1155Enumerable} from "./IERC1155Enumerable.sol";
-import {ERC1155EnumerableInternal} from "./ERC1155EnumerableInternal.sol";
-import {EnumerableSet} from "../../../data/EnumerableSet.sol";
+import { ERC1155BaseInternal } from '../base/ERC1155BaseInternal.sol';
+import { IERC1155Enumerable } from './IERC1155Enumerable.sol';
+import { ERC1155EnumerableInternal } from './ERC1155EnumerableInternal.sol';
+import { EnumerableSet } from '../../../data/EnumerableSet.sol';
 
 /**
  * @title ERC1155 implementation including enumerable and aggregate functions

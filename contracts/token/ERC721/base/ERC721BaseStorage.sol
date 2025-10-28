@@ -1,10 +1,10 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: Apache-2.0
 // FeverTokens Contracts v1.0.0
 
 pragma solidity 0.8.26;
 
-import {EnumerableMap} from "../../../data/EnumerableMap.sol";
-import {EnumerableSet} from "../../../data/EnumerableSet.sol";
+import { EnumerableMap } from '../../../data/EnumerableMap.sol';
+import { EnumerableSet } from '../../../data/EnumerableSet.sol';
 
 library ERC721BaseStorage {
     using EnumerableSet for EnumerableSet.UintSet;

@@ -1,9 +1,9 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: Apache-2.0
 
 pragma solidity 0.8.26;
 
-import {DiamondBaseStorage} from "../base/DiamondBaseStorage.sol";
-import {Facet, IPackageViewerInternal} from "./IPackageViewerInternal.sol";
+import { DiamondBaseStorage } from '../base/DiamondBaseStorage.sol';
+import { Facet, IPackageViewerInternal } from './IPackageViewerInternal.sol';
 
 /**
  * @title PackageViewerInternal: EIP-2535 "Diamond" proxy introspection internal contract
@@ -37,7 +37,9 @@ abstract contract PackageViewerInternal is IPackageViewerInternal {
 
                 for (uint256 facetIndex; facetIndex < numFacets; facetIndex++) {
                     if (diamondFacets[facetIndex].target == facet) {
-                        diamondFacets[facetIndex].selectors[numFacetSelectors[facetIndex]] = selector;
+                        diamondFacets[facetIndex].selectors[
+                            numFacetSelectors[facetIndex]
+                        ] = selector;
                         // probably will never have more than 256 functions from one facet contract
                         require(numFacetSelectors[facetIndex] < 255);
                         numFacetSelectors[facetIndex]++;
@@ -74,7 +76,9 @@ abstract contract PackageViewerInternal is IPackageViewerInternal {
         }
     }
 
-    function _facetFunctionSelectors(address facet) internal view returns (bytes4[] memory selectors) {
+    function _facetFunctionSelectors(
+        address facet
+    ) internal view returns (bytes4[] memory selectors) {
         DiamondBaseStorage.Layout storage $ = DiamondBaseStorage.layout();
 
         selectors = new bytes4[]($.selectorCount);

@@ -1,11 +1,11 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: Apache-2.0
 // FeverTokens Contracts v1.0.0
 
 pragma solidity 0.8.26;
 
-import {IERC20} from "../IERC20.sol"; /// @dev this is required to inherit documentation only
-import {IERC20Base} from "./IERC20Base.sol";
-import {ERC20BaseInternal} from "./ERC20BaseInternal.sol";
+import { IERC20 } from '../IERC20.sol'; /// @dev this is required to inherit documentation only
+import { IERC20Base } from './IERC20Base.sol';
+import { ERC20BaseInternal } from './ERC20BaseInternal.sol';
 
 /**
  * @title Base ERC20 implementation, excluding optional extensions
@@ -37,7 +37,11 @@ abstract contract ERC20Base is IERC20Base, ERC20BaseInternal {
     }
 
     ///  @inheritdoc IERC20
-    function transferFrom(address holder, address recipient, uint256 amount) external virtual returns (bool) {
+    function transferFrom(
+        address holder,
+        address recipient,
+        uint256 amount
+    ) external virtual returns (bool) {
         return _transferFrom(holder, recipient, amount);
     }
 
@@ -51,7 +55,10 @@ abstract contract ERC20Base is IERC20Base, ERC20BaseInternal {
     /**
      * @inheritdoc IERC20Base
      */
-    function decreaseAllowance(address spender, uint256 subtractedValue) public virtual returns (bool) {
+    function decreaseAllowance(
+        address spender,
+        uint256 subtractedValue
+    ) public virtual returns (bool) {
         return _decreaseAllowance(spender, subtractedValue);
     }
 }

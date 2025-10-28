@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: Apache-2.0
 // FeverTokens Contracts v1.0.0
 
 pragma solidity 0.8.26;
@@ -127,7 +127,7 @@ library EnumerableSet {
     }
 
     function _at(Set storage set, uint256 index) private view returns (bytes32) {
-        if (index >= set._values.length) revert("EnumerableSet: Index Out Of Bounds");
+        if (index >= set._values.length) revert('EnumerableSet: Index Out Of Bounds');
         return set._values[index];
     }
 

@@ -1,10 +1,10 @@
-// SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: Apache-2.0
 // FeverTokens Contracts v1.0.0
 
 pragma solidity 0.8.26;
 
-import {IERC2771ContextInternal} from "./IERC2771ContextInternal.sol";
-import {ContextInternal} from "./ContextInternal.sol";
+import { IERC2771ContextInternal } from './IERC2771ContextInternal.sol';
+import { ContextInternal } from './ContextInternal.sol';
 
 abstract contract ERC2771ContextInternal is IERC2771ContextInternal, ContextInternal {
     address internal _trustedForwarder;
