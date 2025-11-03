@@ -76,13 +76,10 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Commit version change
-        run: |
-          git add package.json package-lock.json
-          git commit -m "chore: release candidate v${{ steps.full_version.outputs.version }}" || echo "No changes to commit"
-
       - name: Create and push tag
         run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
           git tag -a "v${{ steps.full_version.outputs.version }}" -m "Release candidate v${{ steps.full_version.outputs.version }}"
           git push origin "v${{ steps.full_version.outputs.version }}"
 
