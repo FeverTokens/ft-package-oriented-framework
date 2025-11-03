@@ -1,6 +1,6 @@
 {
   "name": "@fevertokens/packages",
-  "version": "0.0.1-rc.1",
+  "version": "0.0.1",
   "description": "Modular, upgradeable smart contracts using a package-oriented framework built on the EIP-2535 Diamond Standard.",
   "files": [
     "/contracts/**/*.sol",
