@@ -71,8 +71,8 @@ jobs:
       - name: Update version
         run: npm version ${{ steps.full_version.outputs.version }} --no-git-tag-version
 
-      - name: Publish to npm with next tag
-        run: npm publish --access public --tag next
+      - name: Publish to npm with rc tag
+        run: npm publish --access public --tag rc
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -100,7 +100,7 @@ jobs:
 
             **Installation:**
             ```bash
-            npm install @fevertokens/packages@next
+            npm install @fevertokens/packages@rc
             # or specific version
             npm install @fevertokens/packages@${{ steps.full_version.outputs.version }}
             ```
