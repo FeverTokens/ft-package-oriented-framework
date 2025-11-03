@@ -9,11 +9,13 @@ The package is configured to be published to npm similar to `@openzeppelin/contr
 ## Setup Requirements
 
 ### 1. NPM Account and Package Access
+
 - Create an npm account at https://www.npmjs.com/signup
 - Request access to the `@fevertokens` scope or create it
 - Generate an npm access token with publish permissions
 
 ### 2. GitHub Repository Configuration
+
 1. Go to your GitHub repository Settings → Secrets and variables → Actions
 2. Add a new repository secret:
    - Name: `NPM_TOKEN`
@@ -34,6 +36,7 @@ Use the GitHub Actions workflow for consistent, automated releases:
 5. Click "Run workflow"
 
 The workflow automatically:
+
 - ✅ Validates version format
 - ✅ Installs dependencies
 - ✅ Compiles Solidity contracts
@@ -96,12 +99,14 @@ npm link @fevertokens/packages
 ```
 
 **Advantages of npm link:**
+
 - ✅ Changes are reflected immediately (no need to rebuild/repack)
 - ✅ Great for active development
 - ✅ Easy to set up and tear down
 - ✅ Works like the real npm package
 
 **To unlink when done:**
+
 ```bash
 # In your test project
 npm unlink @fevertokens/packages
@@ -128,6 +133,7 @@ npm install /Users/youssef/Public/project/feverToken/@ft/packages/fevertokens-pa
 ```
 
 **When to use npm pack:**
+
 - ✅ Final verification before publishing
 - ✅ Testing the exact published package contents
 - ✅ Sharing with others without npm registry
@@ -138,23 +144,23 @@ npm install /Users/youssef/Public/project/feverToken/@ft/packages/fevertokens-pa
 // SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.26;
 
-import "@fevertokens/packages/contracts/token/ERC20/IERC20.sol";
-import "@fevertokens/packages/contracts/security/ReentrancyGuard.sol";
-import "@fevertokens/packages/contracts/diamond/base/DiamondBase.sol";
+import '@fevertokens/packages/contracts/token/ERC20/IERC20.sol';
+import '@fevertokens/packages/contracts/security/ReentrancyGuard.sol';
+import '@fevertokens/packages/contracts/diamond/base/DiamondBase.sol';
 
 contract MyToken is IERC20 {
-    // Your implementation
+  // Your implementation
 }
 ```
 
 ### Comparison: npm link vs npm pack
 
-| Feature | npm link | npm pack |
-|---------|----------|----------|
-| **Use case** | Active development | Final testing |
-| **Updates** | Instant | Manual repack needed |
-| **Setup** | Quick symlink | Install tarball |
-| **Accuracy** | Development version | Exact published version |
+| Feature      | npm link              | npm pack                 |
+| ------------ | --------------------- | ------------------------ |
+| **Use case** | Active development    | Final testing            |
+| **Updates**  | Instant               | Manual repack needed     |
+| **Setup**    | Quick symlink         | Install tarball          |
+| **Accuracy** | Development version   | Exact published version  |
 | **Best for** | Iterative development | Pre-publish verification |
 
 ### Dry Run Publishing
@@ -170,13 +176,17 @@ This shows exactly what files will be included in the package.
 ## Package Configuration
 
 ### Files Included in Package
+
 Defined in `package.json` `files` field:
+
 - `/contracts/**/*.sol` - All Solidity contracts
 - `/LICENSE` - Apache 2.0 license
 - `/README.md` - Package documentation
 
 ### Files Excluded from Package
+
 Defined in `.npmignore`:
+
 - Development configuration files
 - Build artifacts (cache, artifacts, typechain)
 - GitHub workflows and scripts
@@ -193,6 +203,7 @@ Follow [Semantic Versioning](https://semver.org/):
 - **PATCH** (0.0.X): Bug fixes, backward compatible
 
 Example progression:
+
 ```
 1.0.0 → Initial release
 1.0.1 → Bug fix in ReentrancyGuard
@@ -212,20 +223,24 @@ After successful publishing:
 ## Troubleshooting
 
 ### "You do not have permission to publish"
+
 - Ensure your npm account has access to `@fevertokens` scope
 - Check that `NPM_TOKEN` secret is properly configured
 - Verify token has publish permissions
 
 ### "Version already exists"
+
 - You cannot republish the same version
 - Bump version number: `npm version patch`
 - Or unpublish if within 24 hours: `npm unpublish @fevertokens/packages@1.0.0`
 
 ### "Compilation errors"
+
 - Fix Solidity compilation issues: `npm run compile`
 - Check for syntax errors: `npm run lint:sol`
 
 ### "Format check failed"
+
 - Run formatter: `npm run format`
 - Verify: `npm run format:check`
 

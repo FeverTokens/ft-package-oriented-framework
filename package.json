@@ -13,8 +13,10 @@
     "compile": "npx hardhat compile",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "format:fix": "prettier --write .",
     "lint": "npm run lint:ts && npm run lint:sol",
     "lint:ts": "eslint --ext .ts .",
+    "lint:ts:fix": "eslint --ext .ts . --fix",
     "lint:sol": "solhint \"contracts/**/*.sol\"",
     "prepack": "npm run compile"
   },

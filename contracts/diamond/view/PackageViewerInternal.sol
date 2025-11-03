@@ -41,7 +41,7 @@ abstract contract PackageViewerInternal is IPackageViewerInternal {
                             numFacetSelectors[facetIndex]
                         ] = selector;
                         // probably will never have more than 256 functions from one facet contract
-                        require(numFacetSelectors[facetIndex] < 255);
+                        require(numFacetSelectors[facetIndex] < 255, 'PackageViewer: max selectors per facet exceeded');
                         numFacetSelectors[facetIndex]++;
                         continueLoop = true;
                         break;

@@ -4,11 +4,11 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: "Version number (e.g., 0.1.0, 1.0.0)"
+        description: 'Version number (e.g., 0.1.0, 1.0.0)'
         required: true
         type: string
       release-notes:
-        description: "Release notes (optional)"
+        description: 'Release notes (optional)'
         required: false
         type: string
 
@@ -29,8 +29,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
-          registry-url: "https://registry.npmjs.org"
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
 
       - name: Validate version format
         run: |
