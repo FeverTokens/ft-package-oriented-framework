@@ -1,0 +1,111 @@
+name: Publish Stable Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version number (e.g., 0.1.0, 1.0.0)'
+        required: true
+        type: string
+      release-notes:
+        description: 'Release notes (optional)'
+        required: false
+        type: string
+
+jobs:
+  publish-stable:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      id-token: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Validate version format
+        run: |
+          if ! echo "${{ github.event.inputs.version }}" | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "❌ Invalid version format. Use semantic versioning (e.g., 1.0.0)"
+            exit 1
+          fi
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Update package.json version
+        run: |
+          npm version ${{ github.event.inputs.version }} --no-git-tag-version
+
+      - name: Compile contracts
+        run: npm run compile
+
+      - name: Run linters
+        run: npm run lint
+
+      - name: Run format check
+        run: npm run format:check
+
+      - name: Publish to npm (latest tag)
+        run: npm publish --access public --tag latest
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Commit version bump
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add package.json
+          git commit -m "chore: bump version to ${{ github.event.inputs.version }}"
+          git tag -a "v${{ github.event.inputs.version }}" -m "Release v${{ github.event.inputs.version }}"
+          git push origin main
+          git push origin "v${{ github.event.inputs.version }}"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ github.event.inputs.version }}
+          name: v${{ github.event.inputs.version }}
+          body: |
+            ## v${{ github.event.inputs.version }}
+
+            ### Installation
+            ```bash
+            npm install @fevertokens/packages
+            # Or specific version
+            npm install @fevertokens/packages@${{ github.event.inputs.version }}
+            ```
+
+            ### Usage
+            ```solidity
+            // SPDX-License-Identifier: Apache-2.0
+            pragma solidity ^0.8.26;
+
+            import "@fevertokens/packages/contracts/token/ERC20/IERC20.sol";
+            ```
+
+            ${{ github.event.inputs.release-notes }}
+
+            **Full Changelog**: https://github.com/${{ github.repository }}/commits/v${{ github.event.inputs.version }}
+          draft: false
+          prerelease: false
+
+      - name: Output success message
+        run: |
+          echo "✅ Successfully published stable version: ${{ github.event.inputs.version }}"
+          echo ""
+          echo "📦 Install with:"
+          echo "   npm install @fevertokens/packages"
+          echo "   npm install @fevertokens/packages@${{ github.event.inputs.version }}"
+          echo ""
+          echo "🔗 GitHub Release: https://github.com/${{ github.repository }}/releases/tag/v${{ github.event.inputs.version }}"
+          echo "🔗 npm: https://www.npmjs.com/package/@fevertokens/packages/v/${{ github.event.inputs.version }}"

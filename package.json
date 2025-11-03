@@ -1,20 +1,47 @@
 {
   "name": "@fevertokens/packages",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Modular, upgradeable smart contracts using a package-oriented framework built on the EIP-2535 Diamond Standard.",
+  "files": [
+    "/contracts/**/*.sol",
+    "/LICENSE",
+    "/README.md"
+  ],
   "scripts": {
     "local:node": "npx hardhat node",
     "clean": "npx hardhat clean",
     "compile": "npx hardhat compile",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "format:fix": "prettier --write .",
     "lint": "npm run lint:ts && npm run lint:sol",
     "lint:ts": "eslint --ext .ts .",
-    "lint:sol": "solhint \"contracts/**/*.sol\""
+    "lint:ts:fix": "eslint --ext .ts . --fix",
+    "lint:sol": "solhint \"contracts/**/*.sol\"",
+    "prepack": "npm run compile"
   },
-  "keywords": [],
-  "author": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FeverTokens/packages.git"
+  },
+  "keywords": [
+    "solidity",
+    "ethereum",
+    "smart-contracts",
+    "diamond-standard",
+    "eip-2535",
+    "upgradeable",
+    "modular",
+    "fevertokens",
+    "proxy",
+    "facets"
+  ],
+  "author": "FeverTokens",
   "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/FeverTokens/packages/issues"
+  },
+  "homepage": "https://github.com/FeverTokens/packages#readme",
   "devDependencies": {
     "@nomicfoundation/hardhat-chai-matchers": "^2.0.0",
     "@nomicfoundation/hardhat-ethers": "^3.0.0",
