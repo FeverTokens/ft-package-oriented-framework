@@ -1,0 +1,45 @@
+# Development files
+.github/
+.git/
+.husky/
+scripts/
+
+# Build artifacts
+cache/
+artifacts/
+coverage/
+typechain/
+typechain-types/
+node_modules/
+
+# Configuration files
+.eslintrc
+.eslintignore
+.prettierrc
+.prettierignore
+.solhint.json
+hardhat.config.ts
+tsconfig.json
+
+# Documentation and guides
+CONTRIBUTING.md
+DCO
+.github/
+.git/
+
+# Environment and local files
+.env
+.env.*
+.DS_Store
+.idea/
+*.log
+.generatedWallet
+.privateKeyDeploy
+
+# Test files (if added in the future)
+test/
+tests/
+*.test.ts
+*.test.js
+*.spec.ts
+*.spec.js
