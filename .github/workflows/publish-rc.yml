@@ -1,0 +1,110 @@
+name: Publish Release Candidate
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version number (e.g., 0.1.0, 1.0.0)'
+        required: true
+        type: string
+      rcversion:
+        description: 'RC version number (e.g., 1, 2, 3, 4...)'
+        required: true
+        type: string
+      release_notes:
+        description: 'Release notes (optional)'
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Validate version format
+        run: |
+          if ! [[ "${{ inputs.version }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Error: Version must follow semantic versioning (e.g., 0.1.0, 1.0.0)"
+            exit 1
+          fi
+          if ! [[ "${{ inputs.rcversion }}" =~ ^[0-9]+$ ]]; then
+            echo "Error: RC version must be a number (e.g., 1, 2, 3, 4)"
+            exit 1
+          fi
+
+      - name: Build full version string
+        id: full_version
+        run: echo "version=${{ inputs.version }}-rc.${{ inputs.rcversion }}" >> $GITHUB_OUTPUT
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Compile contracts
+        run: npm run compile
+
+      - name: Check code formatting
+        run: npm run format:check
+
+      - name: Run linters
+        run: npm run lint
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Update version
+        run: npm version ${{ steps.full_version.outputs.version }} --no-git-tag-version
+
+      - name: Publish to npm with next tag
+        run: npm publish --access public --tag next
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Commit version change
+        run: |
+          git add package.json package-lock.json
+          git commit -m "chore: release candidate v${{ steps.full_version.outputs.version }}" || echo "No changes to commit"
+
+      - name: Create and push tag
+        run: |
+          git tag -a "v${{ steps.full_version.outputs.version }}" -m "Release candidate v${{ steps.full_version.outputs.version }}"
+          git push origin "v${{ steps.full_version.outputs.version }}"
+
+      - name: Create GitHub Pre-Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.full_version.outputs.version }}
+          release_name: v${{ steps.full_version.outputs.version }}
+          body: |
+            ## Release Candidate
+
+            This is a pre-release version for testing purposes.
+
+            **Installation:**
+            ```bash
+            npm install @fevertokens/packages@next
+            # or specific version
+            npm install @fevertokens/packages@${{ steps.full_version.outputs.version }}
+            ```
+
+            ${{ inputs.release_notes }}
+          draft: false
+          prerelease: true
